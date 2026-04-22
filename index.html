@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Celestia — Horoscope App</title>
+<meta name="theme-color" content="#0D0D2B">
+<meta name="description" content="Your daily horoscope and zodiac compatibility app">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Celestia">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #07071A; font-family: 'Outfit', sans-serif; overflow: hidden; }
+
+  @keyframes starPulse {
+    from { opacity: var(--op, 0.3); transform: scale(1); }
+    to   { opacity: calc(var(--op, 0.3) * 2.2); transform: scale(1.4); }
+  }
+  @keyframes floatUp {
+    from { transform: translateY(0px); }
+    to   { transform: translateY(-12px); }
+  }
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  ::-webkit-scrollbar { width: 0; background: transparent; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+
+  .screen-enter { animation: screenIn 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
+  .fade-in      { animation: fadeIn 0.5s ease forwards; }
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script type="text/babel" src="celestia-data.jsx"></script>
+<script type="text/babel" src="celestia-components.jsx"></script>
+<script type="text/babel" src="celestia-screens.jsx"></script>
+
+<script type="text/babel">
+const TWEAK_DEFAULTS = {
+  "accentPink": "#F0A8C4",
+  "accentLavender": "#9B85E0",
+  "bgDeep": "#0D0D2B",
+  "starCount": 80,
+  "showOrbitAnimation": true
+};
+
+function App() {
+  const [tab, setTab]             = React.useState('horoscope');
+  const [viewSign, setViewSign]   = React.useState(null);
+  const [tweaks, setTweaks]       = React.useState(TWEAK_DEFAULTS);
+  const [showTweaks, setShowTweaks] = React.useState(false);
+
+  const [userSign, setUserSign]     = React.useState(() => localStorage.getItem('celestia_sign') || null);
+  const [birthDate, setBirthDate]   = React.useState(() => localStorage.getItem('celestia_bdate') || '');
+  const [birthTime, setBirthTime]   = React.useState(() => localStorage.getItem('celestia_btime') || '');
+
+  const handleSave = (sign, date, time) => {
+    setUserSign(sign); setBirthDate(date); setBirthTime(time);
+    localStorage.setItem('celestia_sign', sign);
+    localStorage.setItem('celestia_bdate', date);
+    localStorage.setItem('celestia_btime', time);
+  };
+
+  const handleSelectSign = (name) => {
+    const sign = ZODIAC_SIGNS.find(z => z.name === name);
+    setViewSign(sign);
+    setTab('horoscope');
+  };
+
+  React.useEffect(() => {
+    const handler = (e) => {
+      if (e.data?.type === '__activate_edit_mode')   setShowTweaks(true);
+      if (e.data?.type === '__deactivate_edit_mode') setShowTweaks(false);
+    };
+    window.addEventListener('message', handler);
+    window.parent.postMessage({ type: '__edit_mode_available' }, '*');
+    return () => window.removeEventListener('message', handler);
+  }, []);
+
+  const updateTweak = (key, val) => {
+    const next = { ...tweaks, [key]: val };
+    setTweaks(next);
+    window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: val } }, '*');
+  };
+
+  React.useEffect(() => {
+    const last = localStorage.getItem('celestia_lastSign');
+    if (last) {
+      const s = ZODIAC_SIGNS.find(z => z.name === last);
+      if (s) setViewSign(s);
+    }
+    const lastTab = localStorage.getItem('celestia_tab');
+    if (lastTab) setTab(lastTab);
+  }, []);
+
+  const goTab = (t) => {
+    setTab(t);
+    localStorage.setItem('celestia_tab', t);
+    if (t !== 'horoscope') setViewSign(null);
+  };
+
+  React.useEffect(() => {
+    if (viewSign) localStorage.setItem('celestia_lastSign', viewSign.name);
+  }, [viewSign]);
+
+  const renderScreen = () => {
+    if (tab === 'horoscope') {
+      if (viewSign) {
+        return <HoroscopeScreen key={viewSign.name} sign={viewSign} onBack={() => setViewSign(null)} />;
+      }
+      return <HomeScreen userSign={userSign} onSelectSign={handleSelectSign} />;
+    }
+    if (tab === 'compatibility') return <CompatibilityScreen userSign={userSign || 'Aries'} />;
+    if (tab === 'settings')     return <SettingsScreen userSign={userSign} birthDate={birthDate} birthTime={birthTime} onSave={handleSave} />;
+  };
+
+  return (
+    <div style={{
+      width: '100vw', height: '100vh',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'radial-gradient(ellipse at 30% 20%, #1a1a4e 0%, #07071A 60%)',
+    }}>
+      <div style={{
+        width: 375, height: 812,
+        background: tweaks.bgDeep,
+        borderRadius: 44,
+        overflow: 'hidden',
+        position: 'relative',
+        boxShadow: '0 40px 120px rgba(0,0,0,0.8), 0 0 0 1px rgba(255,255,255,0.08), inset 0 1px 0 rgba(255,255,255,0.12)',
+      }}>
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, height: 44,
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '10px 28px 0', zIndex: 60,
+        }}>
+          <span style={{ fontSize: 15, fontWeight: 600, color: 'rgba(240,238,248,0.9)', fontVariantNumeric: 'tabular-nums' }}>9:41</span>
+          <div style={{ width: 120, height: 30, background: '#0D0D2B', borderRadius: 20, position: 'absolute', left: '50%', transform: 'translateX(-50%)' }} />
+          <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
+            {[5,7,9,11].map((h,i)=>(
+              <div key={i} style={{ width: 3, height: h, borderRadius: 1.5, background: i < 3 ? 'rgba(240,238,248,0.8)' : 'rgba(240,238,248,0.3)' }} />
+            ))}
+            <div style={{ width: 22, height: 11, border: '1.5px solid rgba(240,238,248,0.6)', borderRadius: 3, marginLeft: 4, position: 'relative', display: 'flex', alignItems: 'center', padding: '0 1px' }}>
+              <div style={{ position: 'absolute', right: -4, top: '50%', transform: 'translateY(-50%)', width: 2.5, height: 6, borderRadius: '0 2px 2px 0', background: 'rgba(240,238,248,0.4)' }} />
+              <div style={{ width: '72%', height: 6, background: 'rgba(240,238,248,0.85)', borderRadius: 1.5 }} />
+            </div>
+          </div>
+        </div>
+
+        <StarField />
+
+        <div key={tab + (viewSign?.name||'')} className="screen-enter" style={{
+          position: 'absolute', inset: 0,
+          paddingTop: 44,
+          color: '#F0EEF8',
+        }}>
+          {renderScreen()}
+        </div>
+
+        <BottomNav activeTab={tab} onTab={goTab} />
+
+        <div style={{
+          position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)',
+          width: 134, height: 5, borderRadius: 3,
+          background: 'rgba(255,255,255,0.25)', zIndex: 70,
+        }} />
+      </div>
+
+      {showTweaks && (
+        <div style={{
+          position: 'fixed', bottom: 24, right: 24, width: 260,
+          background: 'rgba(20,18,48,0.95)', backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(155,133,224,0.3)', borderRadius: 20,
+          padding: 20, zIndex: 999, color: '#F0EEF8', fontFamily: 'Outfit, sans-serif',
+          boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
+        }}>
+          <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 14, color: '#9B85E0', letterSpacing: 0.5 }}>✦ Tweaks</div>
+          {[
+            { key: 'accentPink', label: 'Pink Accent', type: 'color' },
+            { key: 'accentLavender', label: 'Lavender Accent', type: 'color' },
+            { key: 'bgDeep', label: 'Background', type: 'color' },
+          ].map(({ key, label, type }) => (
+            <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+              <span style={{ fontSize: 12, color: 'rgba(240,238,248,0.65)' }}>{label}</span>
+              <input type={type} value={tweaks[key]} onChange={e => updateTweak(key, e.target.value)}
+                style={{ width: 36, height: 28, borderRadius: 8, border: '1px solid rgba(255,255,255,0.15)', cursor: 'pointer', background: 'none', padding: 2 }} />
+            </div>
+          ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+            <span style={{ fontSize: 12, color: 'rgba(240,238,248,0.65)' }}>Orbit Animation</span>
+            <button onClick={() => updateTweak('showOrbitAnimation', !tweaks.showOrbitAnimation)} style={{
+              width: 40, height: 22, borderRadius: 11,
+              background: tweaks.showOrbitAnimation ? '#9B85E0' : 'rgba(255,255,255,0.15)',
+              border: 'none', cursor: 'pointer', position: 'relative', transition: 'background 0.2s',
+            }}>
+              <div style={{
+                width: 16, height: 16, borderRadius: '50%', background: '#fff',
+                position: 'absolute', top: 3, transition: 'left 0.2s',
+                left: tweaks.showOrbitAnimation ? 21 : 3,
+              }} />
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW registration failed:', err));
+  });
+}
+</script>
+</body>
+</html>
