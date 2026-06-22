@@ -601,7 +601,7 @@ function CompatibilityScreen({ userSign }) {
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
 
   const orbR = 90;
-  const cx = 160, cy = 138;
+  const cx = 160, cy = 128;
   const toRad = d => d * Math.PI / 180;
   const partnerX = cx + orbR * Math.cos(toRad(angle));
   const partnerY = cy + orbR * Math.sin(toRad(angle));
@@ -632,8 +632,8 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Orbital canvas ── */}
-      <div style={{ position: 'relative', height: 276, flexShrink: 0, overflow: 'hidden' }}>
-        <svg viewBox="0 0 320 276" width="100%" height="276" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
+      <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
+        <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
             <radialGradient id="cNebulaHalo" cx="50%" cy="50%" r="50%">
               <stop offset="0%"   stopColor="#9B85E0" stopOpacity="0.40" />
@@ -760,7 +760,7 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Add / Change Partner CTA ── */}
-      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.xs}px`, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.lg}px`, display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={() => setShowPicker(true)}
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
@@ -807,11 +807,11 @@ function CompatibilityScreen({ userSign }) {
       )}
 
       {/* ── Narrative copy ── */}
-      <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px`, flex: 1 }}>
+      <div style={{ padding: `0 ${SPACING.xxl}px ${SPACING.xxl}px`, flex: 1 }}>
         <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.4, lineHeight: 1.3 }}>
           {partner ? `${mySign.name} & ${partner.name}` : 'Discover cosmic connections'}
         </div>
-        <p style={{ fontSize: 13, lineHeight: 1.80, color: 'rgba(220,215,245,0.58)', margin: 0 }}>
+        <p style={{ fontSize: 13, lineHeight: 1.85, color: PALETTE.muted, margin: 0 }}>
           {partner
             ? `${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary' : 'challenging but growth-filled'} bond. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension'}.`
             : 'Add a partner to reveal the celestial forces at work between your signs.'}
