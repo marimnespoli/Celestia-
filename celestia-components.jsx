@@ -76,11 +76,10 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
         </svg>
         <div style={{
           position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
-          alignItems: 'center', justifyContent: 'center',
+          alignItems: 'center', justifyContent: 'center', gap: 1,
         }}>
-          <span style={{ color: PALETTE.text, fontSize: 14, fontWeight: 600, lineHeight: 1 }}>
-            {value}<sup style={{ fontSize: 8, fontWeight: 400 }}>%</sup>
-          </span>
+          <span style={{ color: PALETTE.text, fontSize: 13, fontWeight: 700, lineHeight: 1 }}>{value}</span>
+          <span style={{ color: PALETTE.muted, fontSize: 8, fontWeight: 500, lineHeight: 1 }}>/100</span>
         </div>
       </div>
       {/* text-muted token (0.65) ensures ≥7:1 contrast on dark bg */}

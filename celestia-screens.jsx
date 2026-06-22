@@ -23,33 +23,27 @@ function getRisingSign(birthDateStr, birthTimeStr) {
 }
 
 // ── DASHBOARD SCREEN ──────────────────────────────────────────
-// Unified horoscope dashboard replacing the two-step carousel → detail flow.
-// Architecture: horizontal sign bar + period tabs = zero dead-ends, all content
-// reachable in one tap from anywhere on the screen.
 function DashboardScreen({ userSign }) {
   const defaultSign = userSign || ZODIAC_SIGNS[0].name;
   const [selectedSign, setSelectedSign] = React.useState(defaultSign);
   const [period, setPeriod] = React.useState('today');
 
-  // Sync selected sign when user saves a different sign in Profile
   React.useEffect(() => {
     if (userSign) setSelectedSign(userSign);
   }, [userSign]);
 
-  const sign = ZODIAC_SIGNS.find(z => z.name === selectedSign) || ZODIAC_SIGNS[0];
-  const data = sign.horoscope[period] || sign.horoscope.today;
+  const sign    = ZODIAC_SIGNS.find(z => z.name === selectedSign) || ZODIAC_SIGNS[0];
+  const data    = sign.horoscope[period] || sign.horoscope.today;
   const signIdx = ZODIAC_SIGNS.findIndex(z => z.name === selectedSign);
 
-  // Lucky values — deterministic per sign+period, not random, so they feel intentional
   const periodOffset = { yesterday: 3, today: 1, tomorrow: 5 };
-  const colorOffset  = { yesterday: 2, today:  0, tomorrow: 4 };
-  const luckyNum   = ((signIdx * 7 + periodOffset[period]) % 11) + 1;
-  const luckyColors = ['Crimson','Emerald','Violet','Silver','Gold','Lavender','Rose','Midnight Blue','Amber','Cobalt','Aqua','Pearl'];
-  const luckyColor = luckyColors[(signIdx + colorOffset[period]) % 12];
+  const colorOffset  = { yesterday: 2, today: 0,  tomorrow: 4 };
+  const luckyNum     = ((signIdx * 7 + periodOffset[period]) % 11) + 1;
+  const luckyColors  = ['Crimson','Emerald','Violet','Silver','Gold','Lavender','Rose','Midnight Blue','Amber','Cobalt','Aqua','Pearl'];
+  const luckyColor   = luckyColors[(signIdx + colorOffset[period]) % 12];
 
   const scrollRef = React.useRef(null);
 
-  // Auto-scroll the sign bar to keep selected sign centred — reduces cognitive scan load
   React.useEffect(() => {
     if (!scrollRef.current) return;
     const items = scrollRef.current.querySelectorAll('[data-sign-btn]');
@@ -60,8 +54,8 @@ function DashboardScreen({ userSign }) {
 
   const periods = [
     { id: 'yesterday', label: 'Yesterday' },
-    { id: 'today',     label: 'Today' },
-    { id: 'tomorrow',  label: 'Tomorrow' },
+    { id: 'today',     label: 'Today'     },
+    { id: 'tomorrow',  label: 'Tomorrow'  },
   ];
 
   return (
@@ -73,38 +67,34 @@ function DashboardScreen({ userSign }) {
         display: 'flex', justifyContent: 'space-between', alignItems: 'center',
         flexShrink: 0,
       }}>
-        {/* Grid icon — decorative brand mark */}
         <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true">
           <rect x="1" y="1" width="7" height="7" rx="1.5" fill={PALETTE.subtle} />
           <rect x="12" y="1" width="7" height="7" rx="1.5" fill={PALETTE.subtle} />
           <rect x="1" y="12" width="7" height="7" rx="1.5" fill={PALETTE.subtle} />
           <rect x="12" y="12" width="7" height="7" rx="1.5" fill={PALETTE.subtle} />
         </svg>
-        {/* text-primary weight 700 — WCAG AA at 14:1 ✓ */}
         <span style={{ fontSize: 13, fontWeight: 700, color: PALETTE.text, letterSpacing: 2, textTransform: 'uppercase' }}>
           Horoscope
         </span>
-        {/* Spacer keeps title visually centred */}
         <div style={{ width: 18 }} />
       </div>
 
-      {/* ── Horizontal Sign Scroll Bar ── */}
-      {/* Replaces carousel: one tap = instant sign switch, zero navigation steps.
-          Reduces cognitive load by showing all options simultaneously. */}
+      {/* ── Sign Glyph Scroll Bar ──
+          Minimalist glyph-only approach: no images competing with the illustration.
+          Active glyph brightens + gets an underline dot — clear selection signal. */}
       <div
         ref={scrollRef}
         role="tablist"
         aria-label="Select zodiac sign"
         style={{
-          display: 'flex', gap: SPACING.md, overflowX: 'auto',
-          padding: `${SPACING.sm}px ${SPACING.xl}px`,
+          display: 'flex', gap: 0, overflowX: 'auto',
+          padding: `${SPACING.sm}px ${SPACING.xl}px ${SPACING.xs}px`,
           scrollbarWidth: 'none', flexShrink: 0,
-          // Fade edges hint at scrollability without obscuring icons
-          maskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 12%, black 88%, transparent)',
+          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
         }}
       >
-        {ZODIAC_SIGNS.map((z, i) => {
+        {ZODIAC_SIGNS.map((z) => {
           const isActive = z.name === selectedSign;
           return (
             <button
@@ -116,49 +106,39 @@ function DashboardScreen({ userSign }) {
               onClick={() => setSelectedSign(z.name)}
               style={{
                 flex: '0 0 auto',
-                display: 'flex', flexDirection: 'column', alignItems: 'center',
-                gap: SPACING.xs - 1,
-                background: 'none', border: 'none', cursor: 'pointer', padding: 0,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                background: 'none', border: 'none', cursor: 'pointer',
+                padding: `${SPACING.xs}px 10px`,
               }}
             >
-              <div style={{
-                width: 44, height: 44, borderRadius: '50%',
-                // Active: gradient ring + glow; inactive: subtle glass
-                background: isActive
-                  ? 'linear-gradient(135deg, rgba(155,133,224,0.35), rgba(240,168,196,0.35))'
-                  : 'rgba(255,255,255,0.05)',
-                border: `2px solid ${isActive ? PALETTE.lavender : 'rgba(255,255,255,0.1)'}`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                transition: 'all 0.2s ease',
-                boxShadow: isActive ? `0 0 14px rgba(155,133,224,0.45)` : 'none',
-              }}>
-                <img
-                  src={`images/icon-${z.name.toLowerCase()}.png`}
-                  alt=""
-                  style={{ width: 30, height: 30, objectFit: 'contain' }}
-                />
-              </div>
-              {/* font-weight 600 on small labels — improves legibility at 9px (WCAG small text guideline) */}
               <span style={{
-                fontSize: 9, fontWeight: isActive ? 700 : 600,
-                color: isActive ? PALETTE.lavender : PALETTE.subtle,
-                letterSpacing: 0.3, fontFamily: 'Outfit, sans-serif',
+                fontSize: 20,
+                color: isActive ? PALETTE.text : PALETTE.subtle,
                 transition: 'color 0.2s',
-              }}>{z.symbol}</span>
+                lineHeight: 1,
+                filter: isActive ? 'drop-shadow(0 0 6px rgba(155,133,224,0.7))' : 'none',
+              }}>
+                {z.symbol}
+              </span>
+              {/* Active indicator dot */}
+              <span style={{
+                width: 4, height: 4, borderRadius: '50%',
+                background: isActive ? PALETTE.lavender : 'transparent',
+                transition: 'background 0.2s',
+                display: 'block',
+              }} />
             </button>
           );
         })}
       </div>
 
-      {/* ── Time Period Tabs ── */}
-      {/* Explicit Yesterday/Today/Tomorrow removes ambiguity about which data is displayed.
-          Previously 'Today' and 'Month' caused confusion — temporal tabs are more intuitive. */}
+      {/* ── Period Tabs — pill style active state ── */}
       <div
         role="tablist"
         aria-label="Select time period"
         style={{
-          display: 'flex', justifyContent: 'center',
-          borderBottom: '1px solid rgba(255,255,255,0.07)',
+          display: 'flex', justifyContent: 'center', gap: SPACING.xs,
+          padding: `${SPACING.xs}px ${SPACING.xl}px ${SPACING.sm}px`,
           flexShrink: 0,
         }}
       >
@@ -169,17 +149,17 @@ function DashboardScreen({ userSign }) {
             aria-selected={period === p.id}
             onClick={() => setPeriod(p.id)}
             style={{
-              flex: 1, background: 'none', border: 'none', cursor: 'pointer',
-              padding: `${SPACING.sm}px ${SPACING.xs}px`,
+              flex: 1, border: 'none', cursor: 'pointer',
+              padding: `${SPACING.xs + 2}px ${SPACING.xs}px`,
               fontSize: 11, fontWeight: period === p.id ? 700 : 500,
-              // Active: text-primary (14:1 ✓); inactive: text-subtle (4.9:1 ✓)
               color: period === p.id ? PALETTE.text : PALETTE.subtle,
-              letterSpacing: 0.8, textTransform: 'uppercase',
-              borderBottom: period === p.id
-                ? `2px solid ${PALETTE.lavender}`
-                : '2px solid transparent',
-              marginBottom: -1,
-              transition: 'all 0.2s', fontFamily: 'Outfit, sans-serif',
+              letterSpacing: 0.6,
+              background: period === p.id
+                ? 'rgba(155,133,224,0.22)'
+                : 'transparent',
+              borderRadius: 20,
+              transition: 'all 0.2s',
+              fontFamily: 'Outfit, sans-serif',
             }}
           >
             {p.label}
@@ -190,21 +170,21 @@ function DashboardScreen({ userSign }) {
       {/* ── Main Content (scrollable) ── */}
       <div style={{ flex: 1, overflowY: 'auto', paddingBottom: 80 }}>
 
-        {/* Illustration area — preserved as visual anchor, top of content hierarchy */}
+        {/* Illustration — transparent bg, illustration floats on the starfield */}
         <div style={{
-          height: 220, position: 'relative', overflow: 'hidden',
-          background: sign.cardBg,
+          height: 180, position: 'relative', overflow: 'hidden',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
+          flexShrink: 0,
         }}>
-          {/* Atmospheric glow behind illustration */}
+          {/* Atmospheric colour bloom matching sign */}
           <div aria-hidden="true" style={{
             position: 'absolute', width: 200, height: 200, borderRadius: '50%',
-            background: 'rgba(255,255,255,0.2)', filter: 'blur(40px)', top: '5%',
+            background: `radial-gradient(circle, ${sign.accentColor || 'rgba(100,80,200,0.3)'} 0%, transparent 70%)`,
+            filter: 'blur(35px)', opacity: 0.6,
           }} />
           <ZodiacArt name={sign.name} cardBg={sign.cardBg} figureLight={sign.figureLight} size="full" />
-          {/* bg-overlay gradient: transitions illustration into dark bg without hard edge */}
           <div aria-hidden="true" style={{
-            position: 'absolute', bottom: 0, left: 0, right: 0, height: 90,
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: 80,
             background: `linear-gradient(to bottom, transparent, ${PALETTE.bg})`,
           }} />
         </div>
@@ -212,82 +192,84 @@ function DashboardScreen({ userSign }) {
         {/* ── Content block ── */}
         <div style={{ padding: `0 ${SPACING.xl}px` }}>
 
-          {/* Sign name + meta — visual hierarchy: hero name (H1) → meta (caption) */}
-          <div style={{ marginBottom: SPACING.lg }}>
+          {/* Sign name */}
+          <div style={{ marginBottom: SPACING.md }}>
             <h1 style={{
-              margin: 0, fontSize: 30, fontWeight: 800, color: PALETTE.text,
-              letterSpacing: 1, lineHeight: 1, textTransform: 'uppercase',
+              margin: 0, fontSize: 28, fontWeight: 800, color: PALETTE.text,
+              letterSpacing: 1.5, lineHeight: 1, textTransform: 'uppercase',
             }}>
               {sign.name}
             </h1>
-            <p style={{ margin: `${SPACING.xs}px 0 0`, fontSize: 11, color: PALETTE.muted, fontWeight: 500 }}>
+            <p style={{ margin: `${SPACING.xs}px 0 0`, fontSize: 11, color: PALETTE.subtle, fontWeight: 500, letterSpacing: 0.3 }}>
               {sign.element} · {sign.planet} · {sign.dates}
             </p>
           </div>
 
-          {/* Energy rings — moved directly below sign name so metrics contextualise the text below.
-              Previously these were in a separate card at the bottom, competing with the narrative. */}
+          {/* Energy rings */}
           <div style={{
-            display: 'flex', justifyContent: 'space-between',
-            padding: `${SPACING.md}px ${SPACING.sm}px`,
+            display: 'flex', justifyContent: 'space-around',
+            padding: `${SPACING.md}px ${SPACING.xs}px`,
             background: 'rgba(255,255,255,0.04)',
-            borderRadius: 20, border: '1px solid rgba(255,255,255,0.07)',
-            marginBottom: SPACING.lg,
+            borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)',
+            marginBottom: SPACING.md, backdropFilter: 'blur(8px)',
           }}>
             <CircularProgress key={`${sign.name}-${period}-love`}   value={data.love}      label="Love"      color={PALETTE.ringLove}      size={66} />
             <CircularProgress key={`${sign.name}-${period}-emo`}    value={data.emotions}  label="Emotions"  color={PALETTE.ringEmotions}  size={66} />
-            <CircularProgress key={`${sign.name}-${period}-mind`}   value={data.mentality} label="Mentality" color={PALETTE.ringMentality} size={66} />
+            <CircularProgress key={`${sign.name}-${period}-mind`}   value={data.mentality} label="Mind"      color={PALETTE.ringMentality} size={66} />
             <CircularProgress key={`${sign.name}-${period}-career`} value={data.career}    label="Career"    color={PALETTE.ringCareer}    size={66} />
           </div>
 
-          {/* Narrative text with bg-overlay — dark semi-transparent backdrop prevents
-              animated stars from breaking text legibility (WCAG 1.4.3 background requirement) */}
+          {/* Narrative — single paragraph, high contrast on blurred overlay */}
           <div style={{
-            background: PALETTE.bgOverlay,
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(8,8,28,0.72)',
+            backdropFilter: 'blur(12px)',
             borderRadius: 18,
-            padding: SPACING.lg,
-            marginBottom: SPACING.lg,
-            border: '1px solid rgba(255,255,255,0.06)',
+            padding: `${SPACING.lg}px`,
+            marginBottom: SPACING.md,
+            border: '1px solid rgba(255,255,255,0.07)',
           }}>
-            {/* Primary narrative: text-secondary (0.75) → ~9:1 contrast ✓ */}
             <p style={{ ...TYPE.body, color: PALETTE.textSecondary, margin: 0 }}>
               {data.loveSex}
             </p>
-            {/* Divider — visual separation between love and overall insight */}
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: `${SPACING.md}px 0` }} />
-            {/* Secondary insight: muted (0.65) → ~7:1 ✓ — subordinate but still accessible */}
-            <p style={{ fontSize: 13, lineHeight: 1.65, color: PALETTE.muted, margin: 0 }}>
-              {data.overall}
-            </p>
           </div>
 
-          {/* Lucky Number + Color — bottom metadata row */}
-          <div style={{ display: 'flex', gap: SPACING.md, marginBottom: SPACING.lg }}>
+          {/* Lucky Number + Color — glassmorphism cards with breathing room */}
+          <div style={{ display: 'flex', gap: SPACING.sm, marginBottom: SPACING.md }}>
             <div style={{
-              flex: 1, background: 'rgba(255,255,255,0.04)', borderRadius: 14,
-              padding: SPACING.md, border: '1px solid rgba(255,255,255,0.07)',
+              flex: 1,
+              background: 'rgba(155,133,224,0.10)',
+              borderRadius: 18, padding: `${SPACING.lg}px ${SPACING.md}px`,
+              border: '1px solid rgba(155,133,224,0.18)',
+              backdropFilter: 'blur(10px)',
             }}>
-              <div style={{ ...TYPE.label, color: PALETTE.subtle, fontSize: 9, marginBottom: SPACING.xs }}>Lucky Number</div>
-              <div style={{ fontSize: 28, fontWeight: 800, color: PALETTE.lavender, lineHeight: 1 }}>{luckyNum}</div>
+              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.subtle, marginBottom: SPACING.sm }}>
+                Lucky Number
+              </div>
+              <div style={{ fontSize: 30, fontWeight: 800, color: PALETTE.lavender, lineHeight: 1 }}>{luckyNum}</div>
             </div>
             <div style={{
-              flex: 2, background: 'rgba(255,255,255,0.04)', borderRadius: 14,
-              padding: SPACING.md, border: '1px solid rgba(255,255,255,0.07)',
+              flex: 2,
+              background: 'rgba(240,168,196,0.08)',
+              borderRadius: 18, padding: `${SPACING.lg}px ${SPACING.md}px`,
+              border: '1px solid rgba(240,168,196,0.16)',
+              backdropFilter: 'blur(10px)',
             }}>
-              <div style={{ ...TYPE.label, color: PALETTE.subtle, fontSize: 9, marginBottom: SPACING.xs }}>Lucky Color</div>
-              <div style={{ fontSize: 16, fontWeight: 700, color: PALETTE.text, lineHeight: 1.2 }}>{luckyColor}</div>
+              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.subtle, marginBottom: SPACING.sm }}>
+                Lucky Color
+              </div>
+              <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, lineHeight: 1.2 }}>{luckyColor}</div>
             </div>
           </div>
 
-          {/* Traits — semantic tags showing sign personality at a glance */}
+          {/* Traits */}
           <div style={{ display: 'flex', gap: SPACING.xs, flexWrap: 'wrap', marginBottom: SPACING.lg }}>
             {sign.traits.map(t => (
               <span key={t} style={{
-                padding: `${SPACING.xs}px ${SPACING.sm + 2}px`,
+                padding: `${SPACING.xs}px ${SPACING.md}px`,
                 borderRadius: 20, fontSize: 11, fontWeight: 500,
-                background: 'rgba(155,133,224,0.12)', color: PALETTE.lavender,
-                border: '1px solid rgba(155,133,224,0.22)',
+                background: 'rgba(155,133,224,0.10)', color: PALETTE.lavender,
+                border: '1px solid rgba(155,133,224,0.20)',
+                letterSpacing: 0.2,
               }}>{t}</span>
             ))}
           </div>
