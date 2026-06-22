@@ -91,7 +91,7 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
 // ── Zodiac Sign Glyph (line-art SVG) ─────────────────────────
 // Thin monochromatic stroke icons for the sign navigation bar.
 // Uses currentColor so the parent button controls brightness via CSS color.
-function SignGlyph({ name, size = 18 }) {
+function SignGlyph({ name, size = 22 }) {
   const inner = {
     Aries:
       <path d="M10 16L10 8C10 4 5 4 5 8M10 8C10 4 15 4 15 8" />,
@@ -129,7 +129,7 @@ function SignGlyph({ name, size = 18 }) {
     <svg
       width={size} height={size} viewBox="0 0 20 20"
       fill="none" stroke="currentColor"
-      strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
+      strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"
       aria-hidden="true"
     >
       {inner || null}
