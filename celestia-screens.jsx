@@ -690,11 +690,36 @@ function CompatibilityScreen({ userSign }) {
             );
           })()}
 
-          {/* Connection line — very subtle, just whispers the connection */}
-          {partner && (
-            <line x1={myX} y1={myY} x2={partnerX} y2={partnerY}
-              stroke="rgba(255,255,255,0.16)" strokeWidth="1" strokeDasharray="3 6" />
-          )}
+          {/* ── Bézier arc connections — lens-shaped geometric web ──
+              Two quadratic curves bow to opposite sides of the node axis.
+              Control points offset perpendicularly from the canvas center so both
+              arcs curve gracefully around the compass rose.
+              Drawn here so they sit behind both node groups. */}
+          {partner && (() => {
+            const dx   = partnerX - myX;
+            const dy   = partnerY - myY;
+            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+            // Arc start/end: on each node's outer dashed ring (r=37), facing inward
+            const sx = myX      + 37 * dx / dist;
+            const sy = myY      + 37 * dy / dist;
+            const ex = partnerX - 37 * dx / dist;
+            const ey = partnerY - 37 * dy / dist;
+            // Perpendicular unit vector (rotates with the orbit)
+            const px = -dy / dist;
+            const py =  dx / dist;
+            // Control points: 42px either side of canvas center
+            const b = 42;
+            const cp1x = cx + b * px;  const cp1y = cy + b * py;
+            const cp2x = cx - b * px;  const cp2y = cy - b * py;
+            return (
+              <g>
+                <path d={`M ${sx} ${sy} Q ${cp1x} ${cp1y} ${ex} ${ey}`}
+                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.8" />
+                <path d={`M ${sx} ${sy} Q ${cp2x} ${cp2y} ${ex} ${ey}`}
+                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.8" />
+              </g>
+            );
+          })()}
 
           {/* ── Central compass rose — flat geometric illustration, no glow, no gradients ── */}
           {(() => {
