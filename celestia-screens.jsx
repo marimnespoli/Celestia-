@@ -656,8 +656,23 @@ function CompatibilityScreen({ userSign }) {
               filter={p.r >= 2 ? 'url(#cStarGlow)' : undefined} />
           ))}
 
-          {/* Orbit ring — thin dashed, warm-neutral to match compass rose */}
-          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.22)" strokeWidth="1.5" fill="none" strokeDasharray="6 5" />
+          {/* Colored accent dots — scattered pink/purple points matching reference style */}
+          {[
+            {x:62, y:54, r:5,   c:'rgba(215,140,175,0.62)'},
+            {x:257,y:50, r:4,   c:'rgba(125,105,205,0.62)'},
+            {x:44, y:195,r:4,   c:'rgba(215,140,175,0.52)'},
+            {x:222,y:184,r:3.5, c:'rgba(125,105,205,0.48)'},
+            {x:140,y:226,r:3,   c:'rgba(255,255,255,0.65)'},
+            {x:190,y:42, r:2.5, c:'rgba(215,140,175,0.42)'},
+          ].map((p,i) => (
+            <circle key={`acc-${i}`} cx={p.x} cy={p.y} r={p.r} fill={p.c} />
+          ))}
+
+          {/* Outer orbit circle — larger, lighter, establishes the orbital system boundary */}
+          <circle cx={cx} cy={cy} r={116} stroke="rgba(200,185,165,0.13)" strokeWidth="1" fill="none" strokeDasharray="5 9" />
+
+          {/* Inner orbit ring — where nodes travel; slightly more visible */}
+          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.22)" strokeWidth="1" fill="none" strokeDasharray="6 5" />
 
           {/* Comet arc — very subtle white arc, shows where partner will appear */}
           {!partner && (() => {
@@ -725,10 +740,13 @@ function CompatibilityScreen({ userSign }) {
             );
           })()}
 
-          {/* ── Partner sign node — clean glass circle, no gradient, no glow ── */}
+          {/* ── Partner sign node — layered orb: outer dashed ring + inner solid circle ── */}
           {partner ? (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.30)" strokeWidth="1.5" />
+              {/* Outer orbital ring — thin, dashed, 30% opacity — the "orbit" layer */}
+              <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" strokeDasharray="3 4" />
+              {/* Inner circle — thicker stroke creates clear weight hierarchy */}
+              <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
               <foreignObject x="-14" y="-14" width="28" height="28">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
                   <SignGlyph name={partner.name} size={18} />
@@ -737,14 +755,20 @@ function CompatibilityScreen({ userSign }) {
             </g>
           ) : (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.20)" strokeWidth="1" strokeDasharray="4 3" />
+              {/* Outer ring even on ghost slot — keeps spatial consistency */}
+              <circle cx="0" cy="0" r="33" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.8" strokeDasharray="3 5" />
+              {/* Inner dashed invite circle */}
+              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.22)" strokeWidth="1" strokeDasharray="4 3" />
               <text x="0" y="6" textAnchor="middle" fontSize="16" fill="rgba(255,255,255,0.38)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
-          {/* ── My sign node — same clean treatment ── */}
+          {/* ── My sign node — same layered orb system ── */}
           <g transform={`translate(${myX},${myY})`}>
-            <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.30)" strokeWidth="1.5" />
+            {/* Outer orbital dashed ring */}
+            <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" strokeDasharray="3 4" />
+            {/* Inner solid circle — heavier stroke for clear hierarchy */}
+            <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
             <foreignObject x="-14" y="-14" width="28" height="28">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
                 <SignGlyph name={mySign.name} size={18} />
@@ -752,12 +776,12 @@ function CompatibilityScreen({ userSign }) {
             </foreignObject>
           </g>
 
-          {/* Sign name labels — neutral white, consistent weight */}
-          <text x={myX} y={myY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.52)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
+          {/* Sign name labels — pushed down to clear the outer dashed ring */}
+          <text x={myX} y={myY + 48} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.48)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
             {mySign.name.toUpperCase()}
           </text>
           {partner && (
-            <text x={partnerX} y={partnerY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.52)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
+            <text x={partnerX} y={partnerY + 48} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.48)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
               {partner.name.toUpperCase()}
             </text>
           )}
