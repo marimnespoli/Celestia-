@@ -106,26 +106,36 @@ function DashboardScreen({ userSign }) {
               onClick={() => setSelectedSign(z.name)}
               style={{
                 flex: '0 0 auto',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
                 background: 'none', border: 'none', cursor: 'pointer',
-                padding: `${SPACING.xs}px 10px`,
+                padding: `${SPACING.xs}px 8px`,
               }}
             >
-              <span style={{
-                fontSize: 20,
-                color: isActive ? PALETTE.text : PALETTE.subtle,
-                transition: 'color 0.2s',
-                lineHeight: 1,
-                filter: isActive ? 'drop-shadow(0 0 6px rgba(155,133,224,0.7))' : 'none',
+              {/* Circle container: Visibility of System Status — user always knows which sign is active */}
+              <div style={{
+                width: 34, height: 34, borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                background: isActive ? 'rgba(155,133,224,0.18)' : 'transparent',
+                border: isActive
+                  ? '1.5px solid rgba(155,133,224,0.55)'
+                  : '1.5px solid transparent',
+                boxShadow: isActive ? '0 0 14px rgba(155,133,224,0.38)' : 'none',
+                transition: 'all 0.22s ease',
               }}>
-                {z.symbol}
-              </span>
-              {/* Active indicator dot */}
+                <span style={{
+                  fontSize: 17,
+                  color: isActive ? PALETTE.text : PALETTE.subtle,
+                  transition: 'color 0.2s',
+                  lineHeight: 1,
+                }}>
+                  {z.symbol}
+                </span>
+              </div>
               <span style={{
                 width: 4, height: 4, borderRadius: '50%',
                 background: isActive ? PALETTE.lavender : 'transparent',
                 transition: 'background 0.2s',
-                display: 'block',
+                display: 'block', flexShrink: 0,
               }} />
             </button>
           );
@@ -192,26 +202,26 @@ function DashboardScreen({ userSign }) {
         {/* ── Content block ── */}
         <div style={{ padding: `0 ${SPACING.xl}px` }}>
 
-          {/* Sign name */}
-          <div style={{ marginBottom: SPACING.md }}>
+          {/* Sign name — 8px grid: 24px below to match section rhythm */}
+          <div style={{ marginBottom: SPACING.xxl }}>
             <h1 style={{
               margin: 0, fontSize: 28, fontWeight: 800, color: PALETTE.text,
               letterSpacing: 1.5, lineHeight: 1, textTransform: 'uppercase',
             }}>
               {sign.name}
             </h1>
-            <p style={{ margin: `${SPACING.xs}px 0 0`, fontSize: 11, color: PALETTE.subtle, fontWeight: 500, letterSpacing: 0.3 }}>
+            <p style={{ margin: `6px 0 0`, fontSize: 11, color: PALETTE.muted, fontWeight: 500, letterSpacing: 0.3 }}>
               {sign.element} · {sign.planet} · {sign.dates}
             </p>
           </div>
 
-          {/* Energy rings */}
+          {/* Energy rings — 24px below */}
           <div style={{
             display: 'flex', justifyContent: 'space-around',
             padding: `${SPACING.md}px ${SPACING.xs}px`,
-            background: 'rgba(255,255,255,0.04)',
-            borderRadius: 20, border: '1px solid rgba(255,255,255,0.08)',
-            marginBottom: SPACING.md, backdropFilter: 'blur(8px)',
+            background: 'rgba(255,255,255,0.055)',
+            borderRadius: 20, border: '1px solid rgba(255,255,255,0.10)',
+            marginBottom: SPACING.xxl, backdropFilter: 'blur(12px)',
           }}>
             <CircularProgress key={`${sign.name}-${period}-love`}   value={data.love}      label="Love"      color={PALETTE.ringLove}      size={66} />
             <CircularProgress key={`${sign.name}-${period}-emo`}    value={data.emotions}  label="Emotions"  color={PALETTE.ringEmotions}  size={66} />
@@ -219,42 +229,42 @@ function DashboardScreen({ userSign }) {
             <CircularProgress key={`${sign.name}-${period}-career`} value={data.career}    label="Career"    color={PALETTE.ringCareer}    size={66} />
           </div>
 
-          {/* Narrative — single paragraph, high contrast on blurred overlay */}
+          {/* Narrative — deeper overlay, generous line-height for mobile legibility */}
           <div style={{
-            background: 'rgba(8,8,28,0.72)',
-            backdropFilter: 'blur(12px)',
-            borderRadius: 18,
-            padding: `${SPACING.lg}px`,
-            marginBottom: SPACING.md,
-            border: '1px solid rgba(255,255,255,0.07)',
+            background: 'rgba(6,6,22,0.80)',
+            backdropFilter: 'blur(16px)',
+            borderRadius: 20,
+            padding: `${SPACING.lg}px ${SPACING.lg}px`,
+            marginBottom: SPACING.xxl,
+            border: '1px solid rgba(255,255,255,0.09)',
           }}>
-            <p style={{ ...TYPE.body, color: PALETTE.textSecondary, margin: 0 }}>
+            <p style={{ ...TYPE.body, lineHeight: 1.95, color: PALETTE.textSecondary, margin: 0 }}>
               {data.loveSex}
             </p>
           </div>
 
-          {/* Lucky Number + Color — glassmorphism cards with breathing room */}
-          <div style={{ display: 'flex', gap: SPACING.sm, marginBottom: SPACING.md }}>
+          {/* Lucky Number + Color — clearly separated from bg via tinted glass surfaces */}
+          <div style={{ display: 'flex', gap: SPACING.md, marginBottom: SPACING.xxl }}>
             <div style={{
               flex: 1,
-              background: 'rgba(155,133,224,0.10)',
-              borderRadius: 18, padding: `${SPACING.lg}px ${SPACING.md}px`,
-              border: '1px solid rgba(155,133,224,0.18)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(155,133,224,0.14)',
+              borderRadius: 20, padding: `${SPACING.lg}px ${SPACING.md}px`,
+              border: '1px solid rgba(155,133,224,0.28)',
+              backdropFilter: 'blur(14px)',
             }}>
-              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.subtle, marginBottom: SPACING.sm }}>
+              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.muted, marginBottom: SPACING.sm }}>
                 Lucky Number
               </div>
               <div style={{ fontSize: 30, fontWeight: 800, color: PALETTE.lavender, lineHeight: 1 }}>{luckyNum}</div>
             </div>
             <div style={{
               flex: 2,
-              background: 'rgba(240,168,196,0.08)',
-              borderRadius: 18, padding: `${SPACING.lg}px ${SPACING.md}px`,
-              border: '1px solid rgba(240,168,196,0.16)',
-              backdropFilter: 'blur(10px)',
+              background: 'rgba(240,168,196,0.12)',
+              borderRadius: 20, padding: `${SPACING.lg}px ${SPACING.md}px`,
+              border: '1px solid rgba(240,168,196,0.24)',
+              backdropFilter: 'blur(14px)',
             }}>
-              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.subtle, marginBottom: SPACING.sm }}>
+              <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.muted, marginBottom: SPACING.sm }}>
                 Lucky Color
               </div>
               <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, lineHeight: 1.2 }}>{luckyColor}</div>
@@ -262,13 +272,13 @@ function DashboardScreen({ userSign }) {
           </div>
 
           {/* Traits */}
-          <div style={{ display: 'flex', gap: SPACING.xs, flexWrap: 'wrap', marginBottom: SPACING.lg }}>
+          <div style={{ display: 'flex', gap: SPACING.xs, flexWrap: 'wrap', marginBottom: SPACING.xxl }}>
             {sign.traits.map(t => (
               <span key={t} style={{
                 padding: `${SPACING.xs}px ${SPACING.md}px`,
                 borderRadius: 20, fontSize: 11, fontWeight: 500,
-                background: 'rgba(155,133,224,0.10)', color: PALETTE.lavender,
-                border: '1px solid rgba(155,133,224,0.20)',
+                background: 'rgba(155,133,224,0.12)', color: PALETTE.lavender,
+                border: '1px solid rgba(155,133,224,0.22)',
                 letterSpacing: 0.2,
               }}>{t}</span>
             ))}
