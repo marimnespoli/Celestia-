@@ -219,9 +219,9 @@ function DashboardScreen({ userSign }) {
             <CircularProgress key={`${sign.name}-${period}-career`} value={data.career}    label="Career"    color={PALETTE.ringCareer}    size={66} />
           </div>
 
-          {/* Narrative — deeper overlay, generous line-height for mobile legibility */}
+          {/* Narrative */}
           <div style={{
-            background: 'rgba(6,6,22,0.80)',
+            background: 'rgba(255,255,255,0.04)',
             backdropFilter: 'blur(16px)',
             borderRadius: 20,
             padding: `${SPACING.lg}px ${SPACING.lg}px`,
@@ -233,26 +233,26 @@ function DashboardScreen({ userSign }) {
             </p>
           </div>
 
-          {/* Lucky Number + Color — clearly separated from bg via tinted glass surfaces */}
+          {/* Lucky Number + Color */}
           <div style={{ display: 'flex', gap: SPACING.md, marginBottom: SPACING.xxl }}>
             <div style={{
               flex: 1,
-              background: 'rgba(155,133,224,0.14)',
+              background: 'rgba(255,255,255,0.04)',
               borderRadius: 20, padding: `${SPACING.lg}px ${SPACING.md}px`,
-              border: '1px solid rgba(155,133,224,0.28)',
-              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              backdropFilter: 'blur(12px)',
             }}>
               <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.muted, marginBottom: SPACING.sm }}>
                 Lucky Number
               </div>
-              <div style={{ fontSize: 30, fontWeight: 800, color: PALETTE.lavender, lineHeight: 1 }}>{luckyNum}</div>
+              <div style={{ fontSize: 30, fontWeight: 800, color: PALETTE.text, lineHeight: 1 }}>{luckyNum}</div>
             </div>
             <div style={{
               flex: 2,
-              background: 'rgba(240,168,196,0.12)',
+              background: 'rgba(255,255,255,0.04)',
               borderRadius: 20, padding: `${SPACING.lg}px ${SPACING.md}px`,
-              border: '1px solid rgba(240,168,196,0.24)',
-              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              backdropFilter: 'blur(12px)',
             }}>
               <div style={{ fontSize: 9, fontWeight: 600, letterSpacing: 1.8, textTransform: 'uppercase', color: PALETTE.muted, marginBottom: SPACING.sm }}>
                 Lucky Color
@@ -267,8 +267,8 @@ function DashboardScreen({ userSign }) {
               <span key={t} style={{
                 padding: `${SPACING.xs}px ${SPACING.md}px`,
                 borderRadius: 20, fontSize: 11, fontWeight: 500,
-                background: 'rgba(155,133,224,0.12)', color: PALETTE.lavender,
-                border: '1px solid rgba(155,133,224,0.22)',
+                background: 'rgba(255,255,255,0.05)', color: PALETTE.muted,
+                border: '1px solid rgba(255,255,255,0.10)',
                 letterSpacing: 0.2,
               }}>{t}</span>
             ))}
@@ -635,58 +635,39 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
-            <radialGradient id="cNebulaHalo" cx="50%" cy="50%" r="50%">
-              <stop offset="0%"   stopColor="#9B85E0" stopOpacity="0.40" />
-              <stop offset="55%"  stopColor="#5030B0" stopOpacity="0.12" />
-              <stop offset="100%" stopColor="#2010A0" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="cNebula" cx="50%" cy="50%" r="50%">
-              <stop offset="0%"   stopColor="#D4C0FF" stopOpacity={nebulaPulse} />
-              <stop offset="35%"  stopColor="#9B85E0" stopOpacity={nebulaPulse * 0.70} />
-              <stop offset="75%"  stopColor="#6040C0" stopOpacity={nebulaPulse * 0.25} />
-              <stop offset="100%" stopColor="#3010A0" stopOpacity="0" />
-            </radialGradient>
-            <radialGradient id="cMyNode" cx="38%" cy="32%">
-              <stop offset="0%" stopColor="#FFCCE0" />
-              <stop offset="100%" stopColor="#C04090" />
-            </radialGradient>
-            <radialGradient id="cPartnerNode" cx="38%" cy="32%">
-              <stop offset="0%" stopColor="#D0C4FF" />
-              <stop offset="100%" stopColor="#6040C0" />
-            </radialGradient>
-            <filter id="cGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="12" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-            <filter id="cHaloGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="18" result="blur" />
-              <feMerge><feMergeNode in="blur" /></feMerge>
-            </filter>
-            <filter id="cNodeGlow" x="-60%" y="-60%" width="220%" height="220%">
-              <feGaussianBlur stdDeviation="5" result="blur" />
+            {/* Only one subtle filter — for the brightest star dots, nothing else */}
+            <filter id="cStarGlow" x="-150%" y="-150%" width="400%" height="400%">
+              <feGaussianBlur stdDeviation="1.6" result="blur" />
               <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
             </filter>
           </defs>
 
-          {/* Ambient background stars */}
-          {[{x:28,y:36},{x:292,y:28},{x:18,y:198},{x:304,y:215},{x:162,y:14},{x:76,y:254},{x:242,y:248},{x:55,y:140},{x:268,y:100}].map((p,i) => (
-            <circle key={i} cx={p.x} cy={p.y} r={i%3===0?2.5:1.5}
-              fill={i%3===0?PALETTE.pink:i%3===1?PALETTE.lavender:'#fff'}
-              opacity={0.30 + 0.28 * Math.sin(toRad(angle * 1.1 + i * 42))} />
+          {/* Background stars — naturalistic white/barely-tinted points, no neon */}
+          {[
+            {x:28,y:36,r:1.5},{x:292,y:28,r:2.2},{x:18,y:198,r:1},
+            {x:304,y:215,r:1.5},{x:162,y:14,r:1},{x:76,y:254,r:2.5},
+            {x:242,y:248,r:1},{x:55,y:140,r:1.5},{x:268,y:100,r:1},
+            {x:140,y:220,r:1},{x:38,y:80,r:0.8},{x:285,y:160,r:0.8},
+            {x:180,y:240,r:1.2},{x:95,y:18,r:1},
+          ].map((p,i) => (
+            <circle key={i} cx={p.x} cy={p.y} r={p.r}
+              fill="#fff"
+              opacity={0.35 + 0.28 * Math.sin(toRad(angle * 0.75 + i * 38))}
+              filter={p.r >= 2 ? 'url(#cStarGlow)' : undefined} />
           ))}
 
-          {/* Orbit ring */}
-          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(155,133,224,0.18)" strokeWidth="1" fill="none" strokeDasharray="5 5" />
+          {/* Orbit ring — thin dashed, warm-neutral to match compass rose */}
+          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.22)" strokeWidth="1.5" fill="none" strokeDasharray="6 5" />
 
-          {/* Comet arc — sweeps along the orbit to show where the partner will land */}
+          {/* Comet arc — very subtle white arc, shows where partner will appear */}
           {!partner && (() => {
             const circ = 2 * Math.PI * orbR;
-            const arcLen = 60;
+            const arcLen = 55;
             return (
               <circle cx={cx} cy={cy} r={orbR}
                 fill="none"
-                stroke="rgba(200,175,255,0.60)"
-                strokeWidth="2"
+                stroke="rgba(255,255,255,0.30)"
+                strokeWidth="1"
                 strokeLinecap="round"
                 strokeDasharray={`${arcLen} ${circ - arcLen}`}
                 strokeDashoffset={-(angle * circ / 360) + arcLen}
@@ -694,52 +675,76 @@ function CompatibilityScreen({ userSign }) {
             );
           })()}
 
-          {/* Connection line between signs (visible only when partner chosen) */}
+          {/* Connection line — very subtle, just whispers the connection */}
           {partner && (
             <line x1={myX} y1={myY} x2={partnerX} y2={partnerY}
-              stroke="rgba(155,133,224,0.28)" strokeWidth="1" strokeDasharray="4 5" />
+              stroke="rgba(255,255,255,0.16)" strokeWidth="1" strokeDasharray="3 6" />
           )}
 
-          {/* ── Central nebula orb — three layered halos for depth ── */}
-          {/* Outer diffuse halo */}
-          <circle cx={cx} cy={cy} r={80} fill="url(#cNebulaHalo)" filter="url(#cHaloGlow)" opacity={nebulaPulse * 0.85} />
-          {/* Mid nebula with radial gradient */}
-          <circle cx={cx} cy={cy} r={54} fill="url(#cNebula)" filter="url(#cGlow)" />
-          {/* Slow-rotating star rays */}
-          {[0, 60, 120, 180, 240, 300].map(deg => {
-            const a = toRad(deg + angle * 0.25);
+          {/* ── Central compass rose — flat geometric illustration, no glow, no gradients ── */}
+          {(() => {
+            const rot = angle * 0.10; // near-static drift
             return (
-              <line key={deg}
-                x1={cx + 16 * Math.cos(a)} y1={cy + 16 * Math.sin(a)}
-                x2={cx + 46 * Math.cos(a)} y2={cy + 46 * Math.sin(a)}
-                stroke="rgba(215,195,255,0.26)" strokeWidth="1" />
+              <g>
+                {/* Four long cardinal diamond rays */}
+                {[0, 90, 180, 270].map(deg => {
+                  const a  = toRad(deg + rot);
+                  const sa = toRad(deg + rot + 90);
+                  const tip  = { x: cx + 44 * Math.cos(a), y: cy + 44 * Math.sin(a) };
+                  const base = { x: cx +  6 * Math.cos(a), y: cy +  6 * Math.sin(a) };
+                  const mid  = { x: cx + 22 * Math.cos(a), y: cy + 22 * Math.sin(a) };
+                  const lp   = { x: mid.x + 5.5 * Math.cos(sa), y: mid.y + 5.5 * Math.sin(sa) };
+                  const rp   = { x: mid.x - 5.5 * Math.cos(sa), y: mid.y - 5.5 * Math.sin(sa) };
+                  return (
+                    <path key={deg}
+                      d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
+                      fill="rgba(205,185,160,0.50)"
+                      stroke="rgba(220,205,185,0.28)" strokeWidth="0.5" />
+                  );
+                })}
+                {/* Four short diagonal diamond rays */}
+                {[45, 135, 225, 315].map(deg => {
+                  const a  = toRad(deg + rot);
+                  const sa = toRad(deg + rot + 90);
+                  const tip  = { x: cx + 27 * Math.cos(a), y: cy + 27 * Math.sin(a) };
+                  const base = { x: cx +  5 * Math.cos(a), y: cy +  5 * Math.sin(a) };
+                  const mid  = { x: cx + 14 * Math.cos(a), y: cy + 14 * Math.sin(a) };
+                  const lp   = { x: mid.x + 3.5 * Math.cos(sa), y: mid.y + 3.5 * Math.sin(sa) };
+                  const rp   = { x: mid.x - 3.5 * Math.cos(sa), y: mid.y - 3.5 * Math.sin(sa) };
+                  return (
+                    <path key={deg}
+                      d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
+                      fill="rgba(205,185,160,0.32)"
+                      stroke="rgba(220,205,185,0.20)" strokeWidth="0.5" />
+                  );
+                })}
+                {/* Center ring + dot */}
+                <circle cx={cx} cy={cy} r={9} fill="none" stroke="rgba(220,205,185,0.42)" strokeWidth="1" />
+                <circle cx={cx} cy={cy} r={3.5} fill="rgba(225,210,190,0.72)" />
+              </g>
             );
-          })}
-          {/* Inner core rings */}
-          <circle cx={cx} cy={cy} r={20} fill="rgba(120,90,220,0.45)" />
-          <circle cx={cx} cy={cy} r={11} fill="rgba(170,150,255,0.55)" />
-          <circle cx={cx} cy={cy} r={5}  fill="rgba(230,220,255,0.85)" />
+          })()}
 
-          {/* ── Partner sign node ── */}
+          {/* ── Partner sign node — clean glass circle, no gradient, no glow ── */}
           {partner ? (
-            <g transform={`translate(${partnerX},${partnerY})`} filter="url(#cNodeGlow)">
-              <circle cx="0" cy="0" r="26" fill="url(#cPartnerNode)" stroke="rgba(200,180,255,0.55)" strokeWidth="1.5" />
+            <g transform={`translate(${partnerX},${partnerY})`}>
+              <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.30)" strokeWidth="1.5" />
               <foreignObject x="-14" y="-14" width="28" height="28">
-                <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
+                <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
                   <SignGlyph name={partner.name} size={18} />
                 </div>
               </foreignObject>
             </g>
           ) : (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              <circle cx="0" cy="0" r="22" fill="rgba(130,100,210,0.12)" stroke="rgba(155,133,224,0.35)" strokeWidth="1.5" strokeDasharray="4 3" />
-              <text x="0" y="6" textAnchor="middle" fontSize="17" fill="rgba(155,133,224,0.55)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
+              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.20)" strokeWidth="1" strokeDasharray="4 3" />
+              <text x="0" y="6" textAnchor="middle" fontSize="16" fill="rgba(255,255,255,0.38)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
-          {/* ── My sign node ── */}
-          <g transform={`translate(${myX},${myY})`} filter="url(#cNodeGlow)">
-            <circle cx="0" cy="0" r="26" fill="url(#cMyNode)" stroke="rgba(240,168,196,0.55)" strokeWidth="1.5" />
+          {/* ── My sign node — same clean treatment ── */}
+          <g transform={`translate(${myX},${myY})`}>
+            <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.30)" strokeWidth="1.5" />
             <foreignObject x="-14" y="-14" width="28" height="28">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
                 <SignGlyph name={mySign.name} size={18} />
@@ -747,12 +752,12 @@ function CompatibilityScreen({ userSign }) {
             </foreignObject>
           </g>
 
-          {/* Sign name labels beneath nodes */}
-          <text x={myX} y={myY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(245,205,220,0.80)" fontFamily="Outfit,sans-serif" letterSpacing="0.6">
+          {/* Sign name labels — neutral white, consistent weight */}
+          <text x={myX} y={myY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.52)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
             {mySign.name.toUpperCase()}
           </text>
           {partner && (
-            <text x={partnerX} y={partnerY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(210,195,255,0.80)" fontFamily="Outfit,sans-serif" letterSpacing="0.6">
+            <text x={partnerX} y={partnerY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.52)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
               {partner.name.toUpperCase()}
             </text>
           )}
