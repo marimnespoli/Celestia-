@@ -110,12 +110,13 @@ function DashboardScreen({ userSign }) {
                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
                 background: 'none', border: 'none', cursor: 'pointer',
                 padding: `${SPACING.xs}px 11px`,
-                // currentColor drives SignGlyph stroke — parent sets brightness
-                color: isActive ? '#FFFFFF' : 'rgba(240,238,248,0.38)',
+                // Active: pure white + double glow; inactive: 25% opacity — 4× brightness ratio
+                color: isActive ? '#FFFFFF' : 'rgba(240,238,248,0.25)',
                 filter: isActive
-                  ? 'drop-shadow(0 0 7px rgba(255,255,255,0.60))'
+                  ? 'drop-shadow(0 0 8px rgba(255,255,255,0.85)) drop-shadow(0 0 3px rgba(180,160,255,0.70))'
                   : 'none',
-                transition: 'color 0.22s ease, filter 0.22s ease',
+                transform: isActive ? 'scale(1.18)' : 'scale(1)',
+                transition: 'color 0.22s ease, filter 0.22s ease, transform 0.22s ease',
               }}
             >
               <SignGlyph name={z.name} size={19} />
