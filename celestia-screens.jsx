@@ -668,21 +668,21 @@ function CompatibilityScreen({ userSign }) {
             <circle key={`acc-${i}`} cx={p.x} cy={p.y} r={p.r} fill={p.c} />
           ))}
 
-          {/* Outer orbit circle — larger, lighter, establishes the orbital system boundary */}
-          <circle cx={cx} cy={cy} r={116} stroke="rgba(200,185,165,0.13)" strokeWidth="1" fill="none" strokeDasharray="5 9" />
+          {/* Outer orbit circle — hairline, barely visible system boundary */}
+          <circle cx={cx} cy={cy} r={116} stroke="rgba(200,185,165,0.14)" strokeWidth="0.6" fill="none" strokeDasharray="5 9" />
 
-          {/* Inner orbit ring — where nodes travel; slightly more visible */}
-          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.22)" strokeWidth="1" fill="none" strokeDasharray="6 5" />
+          {/* Inner orbit ring — hairline, slightly more presence than outer */}
+          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.24)" strokeWidth="0.7" fill="none" strokeDasharray="6 5" />
 
-          {/* Comet arc — very subtle white arc, shows where partner will appear */}
+          {/* Comet arc — hairline sweeping indicator */}
           {!partner && (() => {
             const circ = 2 * Math.PI * orbR;
             const arcLen = 55;
             return (
               <circle cx={cx} cy={cy} r={orbR}
                 fill="none"
-                stroke="rgba(255,255,255,0.30)"
-                strokeWidth="1"
+                stroke="rgba(255,255,255,0.28)"
+                strokeWidth="0.6"
                 strokeLinecap="round"
                 strokeDasharray={`${arcLen} ${circ - arcLen}`}
                 strokeDashoffset={-(angle * circ / 360) + arcLen}
@@ -714,9 +714,9 @@ function CompatibilityScreen({ userSign }) {
             return (
               <g>
                 <path d={`M ${sx} ${sy} Q ${cp1x} ${cp1y} ${ex} ${ey}`}
-                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.8" />
+                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.6" />
                 <path d={`M ${sx} ${sy} Q ${cp2x} ${cp2y} ${ex} ${ey}`}
-                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.8" />
+                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.6" />
               </g>
             );
           })()}
@@ -768,9 +768,9 @@ function CompatibilityScreen({ userSign }) {
           {/* ── Partner sign node — layered orb: outer dashed ring + inner solid circle ── */}
           {partner ? (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              {/* Outer orbital ring — thin, dashed, 30% opacity — the "orbit" layer */}
-              <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" strokeDasharray="3 4" />
-              {/* Inner circle — thicker stroke creates clear weight hierarchy */}
+              {/* Outer orbital ring — hairline dashed */}
+              <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.26)" strokeWidth="0.6" strokeDasharray="3 4" />
+              {/* Inner circle — 1.5px anchor, stays visually dominant */}
               <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
               <foreignObject x="-14" y="-14" width="28" height="28">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
@@ -780,19 +780,19 @@ function CompatibilityScreen({ userSign }) {
             </g>
           ) : (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              {/* Outer ring even on ghost slot — keeps spatial consistency */}
-              <circle cx="0" cy="0" r="33" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.8" strokeDasharray="3 5" />
-              {/* Inner dashed invite circle */}
-              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.22)" strokeWidth="1" strokeDasharray="4 3" />
+              {/* Outer ring on ghost slot — hairline */}
+              <circle cx="0" cy="0" r="33" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6" strokeDasharray="3 5" />
+              {/* Inner dashed invite circle — hairline */}
+              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" strokeDasharray="4 3" />
               <text x="0" y="6" textAnchor="middle" fontSize="16" fill="rgba(255,255,255,0.38)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
           {/* ── My sign node — same layered orb system ── */}
           <g transform={`translate(${myX},${myY})`}>
-            {/* Outer orbital dashed ring */}
-            <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.8" strokeDasharray="3 4" />
-            {/* Inner solid circle — heavier stroke for clear hierarchy */}
+            {/* Outer orbital dashed ring — hairline */}
+            <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.26)" strokeWidth="0.6" strokeDasharray="3 4" />
+            {/* Inner solid circle — stays 1.5px, the visual anchor of the composition */}
             <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
             <foreignObject x="-14" y="-14" width="28" height="28">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
@@ -801,15 +801,28 @@ function CompatibilityScreen({ userSign }) {
             </foreignObject>
           </g>
 
-          {/* Sign name labels — pushed down to clear the outer dashed ring */}
-          <text x={myX} y={myY + 48} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.48)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
-            {mySign.name.toUpperCase()}
-          </text>
-          {partner && (
-            <text x={partnerX} y={partnerY + 48} textAnchor="middle" fontSize="8.5" fill="rgba(255,255,255,0.48)" fontFamily="Outfit,sans-serif" letterSpacing="1.0">
-              {partner.name.toUpperCase()}
-            </text>
-          )}
+          {/* Sign name labels — always radiate outward from canvas center, never inward */}
+          {(() => {
+            const labelR = orbR + 50; // 50px beyond orbit center
+            const myLabelX  = cx + labelR * Math.cos(toRad(angle + 180));
+            const myLabelY  = cy + labelR * Math.sin(toRad(angle + 180));
+            const ptLabelX  = partner ? cx + labelR * Math.cos(toRad(angle)) : 0;
+            const ptLabelY  = partner ? cy + labelR * Math.sin(toRad(angle))  : 0;
+            return (
+              <React.Fragment>
+                <text x={myLabelX} y={myLabelY + 4} textAnchor="middle" fontSize="8.5"
+                  fill="rgba(255,255,255,0.46)" fontFamily="Outfit,sans-serif" letterSpacing="1.2">
+                  {mySign.name.toUpperCase()}
+                </text>
+                {partner && (
+                  <text x={ptLabelX} y={ptLabelY + 4} textAnchor="middle" fontSize="8.5"
+                    fill="rgba(255,255,255,0.46)" fontFamily="Outfit,sans-serif" letterSpacing="1.2">
+                    {partner.name.toUpperCase()}
+                  </text>
+                )}
+              </React.Fragment>
+            );
+          })()}
         </svg>
       </div>
 
@@ -820,17 +833,17 @@ function CompatibilityScreen({ userSign }) {
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '9px 26px', borderRadius: 30,
-            background: 'rgba(255,255,255,0.06)',
-            border: '1px solid rgba(255,255,255,0.18)',
-            color: 'rgba(255,255,255,0.88)', fontSize: 13, fontWeight: 500, cursor: 'pointer',
+            padding: '9px 28px', borderRadius: 30,
+            background: 'transparent',
+            border: '1px solid rgba(255,255,255,0.22)',
+            color: 'rgba(255,255,255,0.82)', fontSize: 13, fontWeight: 500, cursor: 'pointer',
             fontFamily: 'Outfit, sans-serif',
-            backdropFilter: 'blur(12px)',
+            backdropFilter: 'none',
             boxShadow: 'none',
-            letterSpacing: 0.6, transition: 'background 0.2s, border-color 0.2s, transform 0.15s',
+            letterSpacing: 0.8, transition: 'border-color 0.2s, color 0.2s, transform 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.40)'; e.currentTarget.style.color = '#fff'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.22)'; e.currentTarget.style.color = 'rgba(255,255,255,0.82)'; }}
         >
           {/* Thin plus icon — same stroke weight as sign glyphs */}
           {!partner && (
