@@ -635,9 +635,15 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 276, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 276" width="100%" height="276" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
+            <radialGradient id="cNebulaHalo" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#9B85E0" stopOpacity="0.40" />
+              <stop offset="55%"  stopColor="#5030B0" stopOpacity="0.12" />
+              <stop offset="100%" stopColor="#2010A0" stopOpacity="0" />
+            </radialGradient>
             <radialGradient id="cNebula" cx="50%" cy="50%" r="50%">
-              <stop offset="0%"   stopColor="#C4AAFF" stopOpacity={nebulaPulse} />
-              <stop offset="38%"  stopColor="#8855DD" stopOpacity={nebulaPulse * 0.55} />
+              <stop offset="0%"   stopColor="#D4C0FF" stopOpacity={nebulaPulse} />
+              <stop offset="35%"  stopColor="#9B85E0" stopOpacity={nebulaPulse * 0.70} />
+              <stop offset="75%"  stopColor="#6040C0" stopOpacity={nebulaPulse * 0.25} />
               <stop offset="100%" stopColor="#3010A0" stopOpacity="0" />
             </radialGradient>
             <radialGradient id="cMyNode" cx="38%" cy="32%">
@@ -648,9 +654,13 @@ function CompatibilityScreen({ userSign }) {
               <stop offset="0%" stopColor="#D0C4FF" />
               <stop offset="100%" stopColor="#6040C0" />
             </radialGradient>
-            <filter id="cGlow" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="10" result="blur" />
+            <filter id="cGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="12" result="blur" />
               <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="cHaloGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="18" result="blur" />
+              <feMerge><feMergeNode in="blur" /></feMerge>
             </filter>
             <filter id="cNodeGlow" x="-60%" y="-60%" width="220%" height="220%">
               <feGaussianBlur stdDeviation="5" result="blur" />
@@ -666,7 +676,23 @@ function CompatibilityScreen({ userSign }) {
           ))}
 
           {/* Orbit ring */}
-          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(155,133,224,0.20)" strokeWidth="1" fill="none" strokeDasharray="5 5" />
+          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(155,133,224,0.18)" strokeWidth="1" fill="none" strokeDasharray="5 5" />
+
+          {/* Comet arc — sweeps along the orbit to show where the partner will land */}
+          {!partner && (() => {
+            const circ = 2 * Math.PI * orbR;
+            const arcLen = 60;
+            return (
+              <circle cx={cx} cy={cy} r={orbR}
+                fill="none"
+                stroke="rgba(200,175,255,0.60)"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeDasharray={`${arcLen} ${circ - arcLen}`}
+                strokeDashoffset={-(angle * circ / 360) + arcLen}
+              />
+            );
+          })()}
 
           {/* Connection line between signs (visible only when partner chosen) */}
           {partner && (
@@ -674,20 +700,25 @@ function CompatibilityScreen({ userSign }) {
               stroke="rgba(155,133,224,0.28)" strokeWidth="1" strokeDasharray="4 5" />
           )}
 
-          {/* ── Central nebula orb ── */}
-          <circle cx={cx} cy={cy} r={60} fill="url(#cNebula)" filter="url(#cGlow)" />
+          {/* ── Central nebula orb — three layered halos for depth ── */}
+          {/* Outer diffuse halo */}
+          <circle cx={cx} cy={cy} r={80} fill="url(#cNebulaHalo)" filter="url(#cHaloGlow)" opacity={nebulaPulse * 0.85} />
+          {/* Mid nebula with radial gradient */}
+          <circle cx={cx} cy={cy} r={54} fill="url(#cNebula)" filter="url(#cGlow)" />
           {/* Slow-rotating star rays */}
           {[0, 60, 120, 180, 240, 300].map(deg => {
             const a = toRad(deg + angle * 0.25);
             return (
               <line key={deg}
-                x1={cx + 18 * Math.cos(a)} y1={cy + 18 * Math.sin(a)}
-                x2={cx + 48 * Math.cos(a)} y2={cy + 48 * Math.sin(a)}
-                stroke="rgba(210,190,255,0.22)" strokeWidth="1" />
+                x1={cx + 16 * Math.cos(a)} y1={cy + 16 * Math.sin(a)}
+                x2={cx + 46 * Math.cos(a)} y2={cy + 46 * Math.sin(a)}
+                stroke="rgba(215,195,255,0.26)" strokeWidth="1" />
             );
           })}
-          <circle cx={cx} cy={cy} r={16} fill="rgba(140,110,230,0.40)" />
-          <circle cx={cx} cy={cy} r={7}  fill="rgba(210,195,255,0.65)" />
+          {/* Inner core rings */}
+          <circle cx={cx} cy={cy} r={20} fill="rgba(120,90,220,0.45)" />
+          <circle cx={cx} cy={cy} r={11} fill="rgba(170,150,255,0.55)" />
+          <circle cx={cx} cy={cy} r={5}  fill="rgba(230,220,255,0.85)" />
 
           {/* ── Partner sign node ── */}
           {partner ? (
@@ -729,28 +760,35 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Add / Change Partner CTA ── */}
-      <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px ${SPACING.xs}px` }}>
+      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.xs}px`, display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={() => setShowPicker(true)}
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
           style={{
-            width: '100%', padding: '14px', borderRadius: 30,
-            background: partner
-              ? 'rgba(155,133,224,0.14)'
-              : 'linear-gradient(135deg, #F0A8C4 0%, #9B85E0 100%)',
-            border: partner ? '1.5px solid rgba(155,133,224,0.32)' : 'none',
-            color: '#fff', fontSize: 15, fontWeight: 600, cursor: 'pointer',
+            display: 'inline-flex', alignItems: 'center', gap: 8,
+            padding: '9px 24px', borderRadius: 30,
+            background: 'rgba(155,133,224,0.14)',
+            border: partner
+              ? '1px solid rgba(155,133,224,0.30)'
+              : '1px solid rgba(200,170,255,0.45)',
+            color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
             fontFamily: 'Outfit, sans-serif',
-            backdropFilter: partner ? 'blur(12px)' : 'none',
+            backdropFilter: 'blur(16px)',
             boxShadow: partner
-              ? '0 4px 16px rgba(155,133,224,0.18)'
-              : '0 8px 36px rgba(155,133,224,0.55)',
-            letterSpacing: 0.3, transition: 'box-shadow 0.25s, transform 0.15s',
+              ? '0 2px 12px rgba(155,133,224,0.15)'
+              : '0 4px 24px rgba(155,133,224,0.38), inset 0 1px 0 rgba(255,255,255,0.10)',
+            letterSpacing: 0.4, transition: 'box-shadow 0.25s, transform 0.15s, border-color 0.2s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = partner ? '0 6px 22px rgba(155,133,224,0.28)' : '0 12px 44px rgba(155,133,224,0.70)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';    e.currentTarget.style.boxShadow = partner ? '0 4px 16px rgba(155,133,224,0.18)' : '0 8px 36px rgba(155,133,224,0.55)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(155,133,224,0.50), inset 0 1px 0 rgba(255,255,255,0.12)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = partner ? '0 2px 12px rgba(155,133,224,0.15)' : '0 4px 24px rgba(155,133,224,0.38), inset 0 1px 0 rgba(255,255,255,0.10)'; }}
         >
-          {partner ? `Change Partner (${partner.name})` : 'Add Partner'}
+          {/* Thin plus icon — same stroke weight as sign glyphs */}
+          {!partner && (
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" aria-hidden="true">
+              <path d="M7 2v10M2 7h10" />
+            </svg>
+          )}
+          {partner ? `Change Partner · ${partner.name}` : 'Add Partner'}
         </button>
       </div>
 
@@ -769,14 +807,14 @@ function CompatibilityScreen({ userSign }) {
       )}
 
       {/* ── Narrative copy ── */}
-      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px`, flex: 1 }}>
-        <div style={{ fontSize: 16, fontWeight: 600, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.3 }}>
+      <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px`, flex: 1 }}>
+        <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.4, lineHeight: 1.3 }}>
           {partner ? `${mySign.name} & ${partner.name}` : 'Discover cosmic connections'}
         </div>
-        <p style={{ fontSize: 13, lineHeight: 1.75, color: PALETTE.muted, margin: 0 }}>
+        <p style={{ fontSize: 13, lineHeight: 1.80, color: 'rgba(220,215,245,0.58)', margin: 0 }}>
           {partner
             ? `${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary' : 'challenging but growth-filled'} bond. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension'}.`
-            : 'Discover cosmic connections. Add a partner to reveal the celestial forces at work between your signs.'}
+            : 'Add a partner to reveal the celestial forces at work between your signs.'}
         </p>
       </div>
 
