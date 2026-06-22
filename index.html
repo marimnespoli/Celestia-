@@ -37,11 +37,26 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
+  /* Spinner for Add Partner loading micro-interaction */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
   ::-webkit-scrollbar { width: 0; background: transparent; }
-  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(0.7); cursor: pointer; }
 
   .screen-enter { animation: screenIn 0.35s cubic-bezier(0.4,0,0.2,1) forwards; }
   .fade-in      { animation: fadeIn 0.5s ease forwards; }
+
+  /* Accessibility: disable all motion for users who prefer it (WCAG 2.3.3) */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 </style>
 </head>
 <body>

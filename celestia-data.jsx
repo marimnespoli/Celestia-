@@ -1,17 +1,63 @@
 
 // Celestia — Zodiac data, horoscope content, illustrations
 
+// ── DESIGN SYSTEM: Semantic Color Tokens ─────────────────────
+// All opacity values verified against WCAG 2.1 AA (min 4.5:1 on #0D0D2B bg)
+// rgba(240,238,248,0.3) → ~2.5:1 ✗  |  0.5 → ~4.9:1 ✓  |  0.65 → ~7.0:1 ✓
 const PALETTE = {
-  bg: '#0D0D2B',
-  bgCard: '#1A1A4E',
-  bgCard2: '#13133A',
-  pink: '#F0A8C4',
-  lavender: '#9B85E0',
-  purple: '#6B4FA0',
-  text: '#F0EEF8',
-  muted: 'rgba(240,238,248,0.55)',
-  glass: 'rgba(255,255,255,0.07)',
-  glassBorder: 'rgba(255,255,255,0.13)',
+  // Backgrounds
+  bg: '#0D0D2B',               // card-background: main app dark navy
+  bgCard: '#1A1A4E',           // card-surface: elevated card bg
+  bgCard2: '#13133A',          // card-surface-alt: secondary card bg
+
+  // Brand accents
+  pink: '#F0A8C4',             // primary-action: love / CTA highlight
+  lavender: '#9B85E0',         // secondary-action: compatibility / rings
+  purple: '#6B4FA0',           // interactive-hover: pressed / hover states
+
+  // Text — WCAG AA compliant on #0D0D2B background
+  text: '#F0EEF8',             // text-primary: ~14:1 contrast ✓
+  textSecondary: 'rgba(240,238,248,0.75)', // text-secondary: ~9:1 ✓
+  muted: 'rgba(240,238,248,0.65)',          // text-muted: ~7:1 ✓  (was 0.55)
+  subtle: 'rgba(240,238,248,0.50)',         // text-subtle: ~4.9:1 ✓ (replaces 0.3/0.4 which failed)
+
+  // Surfaces
+  glass: 'rgba(255,255,255,0.07)',          // glass-surface
+  glassBorder: 'rgba(255,255,255,0.13)',    // glass-border
+
+  // Semantic aliases for component use
+  cardBackground: 'rgba(255,255,255,0.06)',
+  cardBorder: 'rgba(255,255,255,0.12)',
+  trackEmpty: 'rgba(255,255,255,0.10)',
+
+  // Energy ring colours (per metric)
+  ringLove: '#F0A8C4',
+  ringEmotions: '#9B85E0',
+  ringMentality: '#7EC8E3',
+  ringCareer: '#A8D8A8',
+};
+
+// ── DESIGN SYSTEM: Spacing Scale ─────────────────────────────
+// 4-point grid — reduces cognitive load through consistent rhythm
+const SPACING = {
+  xs:  4,   // tight inline gap
+  sm:  8,   // inner card padding unit
+  md:  12,  // component internal gap
+  lg:  16,  // section gutter
+  xl:  20,  // screen-edge padding
+  xxl: 24,  // section separation
+  '3xl': 32,
+};
+
+// ── DESIGN SYSTEM: Typography Scale ──────────────────────────
+const TYPE = {
+  label:    { fontSize: 11, fontWeight: 500, letterSpacing: 1.5, textTransform: 'uppercase' },
+  caption:  { fontSize: 12, fontWeight: 400, lineHeight: 1.5 },
+  body:     { fontSize: 13.5, fontWeight: 400, lineHeight: 1.75 }, // improved line-height for readability
+  bodyLg:   { fontSize: 15, fontWeight: 400, lineHeight: 1.7 },
+  subtitle: { fontSize: 16, fontWeight: 600, letterSpacing: -0.2 },
+  title:    { fontSize: 22, fontWeight: 700, letterSpacing: -0.5 },
+  hero:     { fontSize: 30, fontWeight: 700, letterSpacing: -0.6 },
 };
 
 const ZODIAC_SIGNS = [
@@ -165,4 +211,4 @@ const COMPATIBILITY_DATA = {
   Pisces:  { Aries: 60, Taurus: 84, Gemini: 62, Cancer: 92, Leo: 58, Virgo: 76, Libra: 68, Scorpio: 90, Sagittarius: 62, Capricorn: 78, Aquarius: 65, Pisces: 82 },
 };
 
-Object.assign(window, { ZODIAC_SIGNS, COMPATIBILITY_DATA, PALETTE });
+Object.assign(window, { ZODIAC_SIGNS, COMPATIBILITY_DATA, PALETTE, SPACING, TYPE });
