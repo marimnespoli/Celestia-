@@ -686,7 +686,7 @@ function CompatibilityScreen({ userSign }) {
             const rot = angle * 0.10; // near-static drift
             return (
               <g>
-                {/* Four long cardinal diamond rays */}
+                {/* Four long cardinal diamond rays — heavier stroke, these are the focal axis */}
                 {[0, 90, 180, 270].map(deg => {
                   const a  = toRad(deg + rot);
                   const sa = toRad(deg + rot + 90);
@@ -698,11 +698,11 @@ function CompatibilityScreen({ userSign }) {
                   return (
                     <path key={deg}
                       d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
-                      fill="rgba(205,185,160,0.50)"
-                      stroke="rgba(220,205,185,0.28)" strokeWidth="0.5" />
+                      fill="rgba(205,185,160,0.52)"
+                      stroke="rgba(225,210,190,0.50)" strokeWidth="0.9" />
                   );
                 })}
-                {/* Four short diagonal diamond rays */}
+                {/* Four short diagonal diamond rays — finer stroke, secondary rhythm */}
                 {[45, 135, 225, 315].map(deg => {
                   const a  = toRad(deg + rot);
                   const sa = toRad(deg + rot + 90);
@@ -714,8 +714,8 @@ function CompatibilityScreen({ userSign }) {
                   return (
                     <path key={deg}
                       d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
-                      fill="rgba(205,185,160,0.32)"
-                      stroke="rgba(220,205,185,0.20)" strokeWidth="0.5" />
+                      fill="rgba(205,185,160,0.30)"
+                      stroke="rgba(220,205,185,0.25)" strokeWidth="0.4" />
                   );
                 })}
                 {/* Center ring + dot */}
@@ -771,21 +771,17 @@ function CompatibilityScreen({ userSign }) {
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '9px 24px', borderRadius: 30,
-            background: 'rgba(155,133,224,0.14)',
-            border: partner
-              ? '1px solid rgba(155,133,224,0.30)'
-              : '1px solid rgba(200,170,255,0.45)',
-            color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer',
+            padding: '9px 26px', borderRadius: 30,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.18)',
+            color: 'rgba(255,255,255,0.88)', fontSize: 13, fontWeight: 500, cursor: 'pointer',
             fontFamily: 'Outfit, sans-serif',
-            backdropFilter: 'blur(16px)',
-            boxShadow: partner
-              ? '0 2px 12px rgba(155,133,224,0.15)'
-              : '0 4px 24px rgba(155,133,224,0.38), inset 0 1px 0 rgba(255,255,255,0.10)',
-            letterSpacing: 0.4, transition: 'box-shadow 0.25s, transform 0.15s, border-color 0.2s',
+            backdropFilter: 'blur(12px)',
+            boxShadow: 'none',
+            letterSpacing: 0.6, transition: 'background 0.2s, border-color 0.2s, transform 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.boxShadow = '0 6px 28px rgba(155,133,224,0.50), inset 0 1px 0 rgba(255,255,255,0.12)'; }}
-          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = partner ? '0 2px 12px rgba(155,133,224,0.15)' : '0 4px 24px rgba(155,133,224,0.38), inset 0 1px 0 rgba(255,255,255,0.10)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.03)'; e.currentTarget.style.background = 'rgba(255,255,255,0.10)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.28)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.18)'; }}
         >
           {/* Thin plus icon — same stroke weight as sign glyphs */}
           {!partner && (
@@ -813,10 +809,10 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Narrative copy ── */}
       <div style={{ padding: `0 ${SPACING.xxl}px ${SPACING.xxl}px`, flex: 1 }}>
-        <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.4, lineHeight: 1.3 }}>
+        <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.lg, letterSpacing: -0.4, lineHeight: 1.3 }}>
           {partner ? `${mySign.name} & ${partner.name}` : 'Discover cosmic connections'}
         </div>
-        <p style={{ fontSize: 13, lineHeight: 1.85, color: PALETTE.muted, margin: 0 }}>
+        <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
           {partner
             ? `${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary' : 'challenging but growth-filled'} bond. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension'}.`
             : 'Add a partner to reveal the celestial forces at work between your signs.'}
