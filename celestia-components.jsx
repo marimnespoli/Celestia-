@@ -88,6 +88,55 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
   );
 }
 
+// ── Zodiac Sign Glyph (line-art SVG) ─────────────────────────
+// Thin monochromatic stroke icons for the sign navigation bar.
+// Uses currentColor so the parent button controls brightness via CSS color.
+function SignGlyph({ name, size = 18 }) {
+  const inner = {
+    Aries:
+      <path d="M10 16L10 8C10 4 5 4 5 8M10 8C10 4 15 4 15 8" />,
+    Taurus:
+      <React.Fragment>
+        <path d="M6 11C6 5 14 5 14 11" />
+        <circle cx="10" cy="15" r="4" />
+      </React.Fragment>,
+    Gemini:
+      <path d="M7 4L7 16M13 4L13 16M6.5 4L13.5 4M6.5 16L13.5 16" />,
+    Cancer:
+      <path d="M15 7C15 11 5 11 5 7M5 13C5 9 15 9 15 13" />,
+    Leo:
+      <React.Fragment>
+        <path d="M4 12C4 6 9 4 10 7C11 10 10 12 13 12.5" />
+        <circle cx="13.5" cy="15.5" r="3" />
+      </React.Fragment>,
+    Virgo:
+      <path d="M4 4L4 16M4 4Q7.5 1 10 4L10 16M10 4Q13 1 16 4L16 14Q16 19 12.5 18" />,
+    Libra:
+      <path d="M3 15L17 15M6.5 15C6.5 9.5 13.5 9.5 13.5 15" />,
+    Scorpio:
+      <path d="M4 6L4 15M4 6C7 2 10 2 10 6C10 2 14 2 16 6L16 14L18.5 11.5M16 14L18.5 16.5" />,
+    Sagittarius:
+      <path d="M5 16L16 4M10 4L16 4L16 10" />,
+    Capricorn:
+      <path d="M4 4L4 13Q4 17.5 8.5 17.5A4.5 4.5 0 0 0 13 13V8C13 5 17 5 17 8" />,
+    Aquarius:
+      <path d="M4 8Q7 5 10 8Q13 11 16 8M4 13Q7 10 10 13Q13 16 16 13" />,
+    Pisces:
+      <path d="M10 4C5 4 3 7 3 10C3 13 5 16 10 16M10 4C15 4 17 7 17 10C17 13 15 16 10 16M3 10L17 10" />,
+  }[name];
+
+  return (
+    <svg
+      width={size} height={size} viewBox="0 0 20 20"
+      fill="none" stroke="currentColor"
+      strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      {inner || null}
+    </svg>
+  );
+}
+
 // ── Zodiac Illustration ────────────────────────────────────────
 function ZodiacArt({ name, cardBg, figureLight = false, size = 'full' }) {
   const h = size === 'full' ? 220 : 200;
@@ -248,4 +297,4 @@ function PrimaryButton({ children, onClick, style = {}, disabled = false, ariaLa
   );
 }
 
-Object.assign(window, { StarField, CircularProgress, ZodiacArt, BottomNav, GlassCard, PrimaryButton });
+Object.assign(window, { StarField, CircularProgress, ZodiacArt, SignGlyph, BottomNav, GlassCard, PrimaryButton });

@@ -80,18 +80,19 @@ function DashboardScreen({ userSign }) {
       </div>
 
       {/* ── Sign Glyph Scroll Bar ──
-          Minimalist glyph-only approach: no images competing with the illustration.
-          Active glyph brightens + gets an underline dot — clear selection signal. */}
+          Line-art SVG glyphs — no circles, no backgrounds, no emoji.
+          Active sign: white + glow (brightest); inactive: 38% opacity (deep).
+          Reference: uniform kerning, centred, pure form. */}
       <div
         ref={scrollRef}
         role="tablist"
         aria-label="Select zodiac sign"
         style={{
           display: 'flex', gap: 0, overflowX: 'auto',
-          padding: `${SPACING.sm}px ${SPACING.xl}px ${SPACING.xs}px`,
+          padding: `${SPACING.xs}px ${SPACING.xl}px ${SPACING.sm}px`,
           scrollbarWidth: 'none', flexShrink: 0,
-          maskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
-          WebkitMaskImage: 'linear-gradient(to right, transparent, black 8%, black 92%, transparent)',
+          maskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
+          WebkitMaskImage: 'linear-gradient(to right, transparent, black 10%, black 90%, transparent)',
         }}
       >
         {ZODIAC_SIGNS.map((z) => {
@@ -106,36 +107,24 @@ function DashboardScreen({ userSign }) {
               onClick={() => setSelectedSign(z.name)}
               style={{
                 flex: '0 0 auto',
-                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
                 background: 'none', border: 'none', cursor: 'pointer',
-                padding: `${SPACING.xs}px 8px`,
+                padding: `${SPACING.xs}px 11px`,
+                // currentColor drives SignGlyph stroke — parent sets brightness
+                color: isActive ? '#FFFFFF' : 'rgba(240,238,248,0.38)',
+                filter: isActive
+                  ? 'drop-shadow(0 0 7px rgba(255,255,255,0.60))'
+                  : 'none',
+                transition: 'color 0.22s ease, filter 0.22s ease',
               }}
             >
-              {/* Circle container: Visibility of System Status — user always knows which sign is active */}
-              <div style={{
-                width: 34, height: 34, borderRadius: '50%',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: isActive ? 'rgba(155,133,224,0.18)' : 'transparent',
-                border: isActive
-                  ? '1.5px solid rgba(155,133,224,0.55)'
-                  : '1.5px solid transparent',
-                boxShadow: isActive ? '0 0 14px rgba(155,133,224,0.38)' : 'none',
-                transition: 'all 0.22s ease',
-              }}>
-                <span style={{
-                  fontSize: 17,
-                  color: isActive ? PALETTE.text : PALETTE.subtle,
-                  transition: 'color 0.2s',
-                  lineHeight: 1,
-                }}>
-                  {z.symbol}
-                </span>
-              </div>
+              <SignGlyph name={z.name} size={19} />
+              {/* Minimal active dot — secondary cue after brightness */}
               <span style={{
-                width: 4, height: 4, borderRadius: '50%',
-                background: isActive ? PALETTE.lavender : 'transparent',
+                width: 3, height: 3, borderRadius: '50%',
+                background: isActive ? 'rgba(255,255,255,0.7)' : 'transparent',
+                display: 'block',
                 transition: 'background 0.2s',
-                display: 'block', flexShrink: 0,
               }} />
             </button>
           );
