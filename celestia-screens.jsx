@@ -583,153 +583,197 @@ function CompatibilityScreen({ userSign }) {
   const [partnerSign, setPartnerSign] = React.useState(null);
   const [showPicker, setShowPicker]   = React.useState(false);
   const [angle, setAngle]             = React.useState(0);
-  // Loading state: provides immediate UX feedback when a sign is tapped
   const [selecting, setSelecting]     = React.useState(null);
 
   React.useEffect(() => {
-    const raf = requestAnimationFrame(function tick() {
-      setAngle(a => (a + 0.4) % 360);
-      requestAnimationFrame(tick);
-    });
-    return () => cancelAnimationFrame(raf);
+    let rafId;
+    const tick = () => { setAngle(a => (a + 0.35) % 360); rafId = requestAnimationFrame(tick); };
+    rafId = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafId);
   }, []);
 
-  const mySign = ZODIAC_SIGNS.find(z => z.name === userSign) || ZODIAC_SIGNS[0];
+  const mySign  = ZODIAC_SIGNS.find(z => z.name === userSign) || ZODIAC_SIGNS[0];
   const partner = partnerSign ? ZODIAC_SIGNS.find(z => z.name === partnerSign) : null;
-  const compat = partner ? COMPATIBILITY_DATA[mySign.name]?.[partner.name] : null;
+  const compat  = partner ? COMPATIBILITY_DATA[mySign.name]?.[partner.name] : null;
   const i1 = ZODIAC_SIGNS.findIndex(z => z.name === mySign.name);
   const i2 = partner ? ZODIAC_SIGNS.findIndex(z => z.name === partner.name) : 0;
   const loveScore   = compat ? Math.min(99, Math.max(35, compat + ((i1 * 5 + i2 * 3) % 21) - 10)) : null;
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
 
-  const orbR = 95;
-  const partnerX = 160 + orbR * Math.cos((angle * Math.PI) / 180);
-  const partnerY = 160 + orbR * Math.sin((angle * Math.PI) / 180);
-  const myX = 160 + orbR * Math.cos(((angle + 180) * Math.PI) / 180);
-  const myY = 160 + orbR * Math.sin(((angle + 180) * Math.PI) / 180);
+  const orbR = 90;
+  const cx = 160, cy = 138;
+  const toRad = d => d * Math.PI / 180;
+  const partnerX = cx + orbR * Math.cos(toRad(angle));
+  const partnerY = cy + orbR * Math.sin(toRad(angle));
+  const myX = cx + orbR * Math.cos(toRad(angle + 180));
+  const myY = cy + orbR * Math.sin(toRad(angle + 180));
 
-  // Simulates network/processing latency so the user sees confirmation before dismiss
+  // Pulse opacity when waiting for partner; steady when connected
+  const nebulaPulse = partner ? 0.72 : 0.52 + 0.28 * Math.sin(toRad(angle * 2.2));
+
   const handleSelectSign = (name) => {
     setSelecting(name);
-    setTimeout(() => {
-      setPartnerSign(name);
-      setSelecting(null);
-      setShowPicker(false);
-    }, 600);
+    setTimeout(() => { setPartnerSign(name); setSelecting(null); setShowPicker(false); }, 600);
   };
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', overflowY: 'auto' }}>
+
       {/* Header */}
       <div style={{ padding: `${SPACING.lg}px ${SPACING.xxl}px 0`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', zIndex: 2 }}>
         <span style={{ fontSize: 20, fontWeight: 700, color: PALETTE.text, letterSpacing: -0.4 }}>Compatibility</span>
         <div style={{ display: 'flex', gap: SPACING.xs }} aria-hidden="true">
-          {[0,1,2].map(i=><div key={i} style={{ width: 20, height: 2.5, borderRadius: 2, background: 'rgba(240,238,248,0.3)' }} />)}
+          {[0,1,2].map(i => <div key={i} style={{ width: 20, height: 2.5, borderRadius: 2, background: 'rgba(240,238,248,0.3)' }} />)}
         </div>
       </div>
 
-      {/* Profile sign hint — text-muted (0.65) bumped from original 0.60/0.75 for consistency */}
       <div style={{ textAlign: 'center', fontSize: 11, padding: `${SPACING.xs}px ${SPACING.xxl}px 0`, color: userSign ? PALETTE.muted : PALETTE.pink }}>
         {userSign ? `Your sign (${userSign}) is saved in Profile` : 'Set your sign in Profile — it will appear here'}
       </div>
 
-      {/* Orbital animation */}
-      <div style={{ position: 'relative', height: 260, flexShrink: 0, overflow: 'hidden' }}>
-        <svg viewBox="0 0 320 320" width="100%" height="260" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
-          <circle cx="160" cy="160" r="130" stroke="rgba(155,133,224,0.18)" strokeWidth="1.5" fill="none" strokeDasharray="6 5" />
-          <circle cx="160" cy="160" r="95" stroke="rgba(240,168,196,0.22)" strokeWidth="1" fill="none" strokeDasharray="4 4" />
-
-          {[{x:60,y:80},{x:260,y:60},{x:40,y:240},{x:280,y:250},{x:180,y:40},{x:100,y:290}].map((p,i) => (
-            <circle key={i} cx={p.x} cy={p.y} r={i%2===0?3:2}
-              fill={i%3===0?PALETTE.pink:i%3===1?PALETTE.lavender:'#fff'}
-              opacity={0.6 + 0.3*Math.sin((angle/20)+i)} />
-          ))}
-
+      {/* ── Orbital canvas ── */}
+      <div style={{ position: 'relative', height: 276, flexShrink: 0, overflow: 'hidden' }}>
+        <svg viewBox="0 0 320 276" width="100%" height="276" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
-            <radialGradient id="partnerGrad" cx="40%" cy="35%">
-              <stop offset="0%" stopColor="#C8B8F8" />
-              <stop offset="100%" stopColor="#7050B8" />
+            <radialGradient id="cNebula" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor="#C4AAFF" stopOpacity={nebulaPulse} />
+              <stop offset="38%"  stopColor="#8855DD" stopOpacity={nebulaPulse * 0.55} />
+              <stop offset="100%" stopColor="#3010A0" stopOpacity="0" />
             </radialGradient>
-            <radialGradient id="myGrad" cx="40%" cy="35%">
-              <stop offset="0%" stopColor="#F8C8D8" />
-              <stop offset="100%" stopColor="#C050A0" />
+            <radialGradient id="cMyNode" cx="38%" cy="32%">
+              <stop offset="0%" stopColor="#FFCCE0" />
+              <stop offset="100%" stopColor="#C04090" />
             </radialGradient>
-            <clipPath id="myClip"><circle cx="0" cy="0" r="28" /></clipPath>
-            <clipPath id="partnerClip"><circle cx="0" cy="0" r="28" /></clipPath>
+            <radialGradient id="cPartnerNode" cx="38%" cy="32%">
+              <stop offset="0%" stopColor="#D0C4FF" />
+              <stop offset="100%" stopColor="#6040C0" />
+            </radialGradient>
+            <filter id="cGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="10" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
+            <filter id="cNodeGlow" x="-60%" y="-60%" width="220%" height="220%">
+              <feGaussianBlur stdDeviation="5" result="blur" />
+              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+            </filter>
           </defs>
 
+          {/* Ambient background stars */}
+          {[{x:28,y:36},{x:292,y:28},{x:18,y:198},{x:304,y:215},{x:162,y:14},{x:76,y:254},{x:242,y:248},{x:55,y:140},{x:268,y:100}].map((p,i) => (
+            <circle key={i} cx={p.x} cy={p.y} r={i%3===0?2.5:1.5}
+              fill={i%3===0?PALETTE.pink:i%3===1?PALETTE.lavender:'#fff'}
+              opacity={0.30 + 0.28 * Math.sin(toRad(angle * 1.1 + i * 42))} />
+          ))}
+
+          {/* Orbit ring */}
+          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(155,133,224,0.20)" strokeWidth="1" fill="none" strokeDasharray="5 5" />
+
+          {/* Connection line between signs (visible only when partner chosen) */}
+          {partner && (
+            <line x1={myX} y1={myY} x2={partnerX} y2={partnerY}
+              stroke="rgba(155,133,224,0.28)" strokeWidth="1" strokeDasharray="4 5" />
+          )}
+
+          {/* ── Central nebula orb ── */}
+          <circle cx={cx} cy={cy} r={60} fill="url(#cNebula)" filter="url(#cGlow)" />
+          {/* Slow-rotating star rays */}
+          {[0, 60, 120, 180, 240, 300].map(deg => {
+            const a = toRad(deg + angle * 0.25);
+            return (
+              <line key={deg}
+                x1={cx + 18 * Math.cos(a)} y1={cy + 18 * Math.sin(a)}
+                x2={cx + 48 * Math.cos(a)} y2={cy + 48 * Math.sin(a)}
+                stroke="rgba(210,190,255,0.22)" strokeWidth="1" />
+            );
+          })}
+          <circle cx={cx} cy={cy} r={16} fill="rgba(140,110,230,0.40)" />
+          <circle cx={cx} cy={cy} r={7}  fill="rgba(210,195,255,0.65)" />
+
+          {/* ── Partner sign node ── */}
           {partner ? (
-            <g transform={`translate(${partnerX},${partnerY})`}>
-              <circle cx="0" cy="0" r="32" fill="url(#partnerGrad)" stroke="rgba(240,168,196,0.5)" strokeWidth="2" />
-              <image href={`images/icon-${partner.name.toLowerCase()}.png`} x="-28" y="-28" width="56" height="56" clipPath="url(#partnerClip)" />
+            <g transform={`translate(${partnerX},${partnerY})`} filter="url(#cNodeGlow)">
+              <circle cx="0" cy="0" r="26" fill="url(#cPartnerNode)" stroke="rgba(200,180,255,0.55)" strokeWidth="1.5" />
+              <foreignObject x="-14" y="-14" width="28" height="28">
+                <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
+                  <SignGlyph name={partner.name} size={18} />
+                </div>
+              </foreignObject>
             </g>
           ) : (
             <g transform={`translate(${partnerX},${partnerY})`}>
-              <circle cx="0" cy="0" r="28" fill="rgba(155,133,224,0.15)" stroke="rgba(155,133,224,0.3)" strokeWidth="1.5" strokeDasharray="4 3" />
-              <text x="0" y="5" textAnchor="middle" fontSize="16" fill="rgba(155,133,224,0.5)">?</text>
+              <circle cx="0" cy="0" r="22" fill="rgba(130,100,210,0.12)" stroke="rgba(155,133,224,0.35)" strokeWidth="1.5" strokeDasharray="4 3" />
+              <text x="0" y="6" textAnchor="middle" fontSize="17" fill="rgba(155,133,224,0.55)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
-          <g transform={`translate(${myX},${myY})`}>
-            <circle cx="0" cy="0" r="32" fill="url(#myGrad)" stroke="rgba(155,133,224,0.5)" strokeWidth="2" />
-            <image href={`images/icon-${mySign.name.toLowerCase()}.png`} x="-28" y="-28" width="56" height="56" clipPath="url(#myClip)" />
+          {/* ── My sign node ── */}
+          <g transform={`translate(${myX},${myY})`} filter="url(#cNodeGlow)">
+            <circle cx="0" cy="0" r="26" fill="url(#cMyNode)" stroke="rgba(240,168,196,0.55)" strokeWidth="1.5" />
+            <foreignObject x="-14" y="-14" width="28" height="28">
+              <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
+                <SignGlyph name={mySign.name} size={18} />
+              </div>
+            </foreignObject>
           </g>
+
+          {/* Sign name labels beneath nodes */}
+          <text x={myX} y={myY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(245,205,220,0.80)" fontFamily="Outfit,sans-serif" letterSpacing="0.6">
+            {mySign.name.toUpperCase()}
+          </text>
+          {partner && (
+            <text x={partnerX} y={partnerY + 38} textAnchor="middle" fontSize="8.5" fill="rgba(210,195,255,0.80)" fontFamily="Outfit,sans-serif" letterSpacing="0.6">
+              {partner.name.toUpperCase()}
+            </text>
+          )}
         </svg>
       </div>
 
-      {/* Add Partner CTA */}
+      {/* ── Add / Change Partner CTA ── */}
       <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px ${SPACING.xs}px` }}>
         <button
           onClick={() => setShowPicker(true)}
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
           style={{
-            width: '100%', padding: '13px', borderRadius: 30,
-            background: 'linear-gradient(135deg, rgba(240,168,196,0.25), rgba(155,133,224,0.25))',
-            border: `1.5px solid rgba(240,168,196,0.4)`,
-            color: PALETTE.text, fontSize: 15, fontWeight: 600, cursor: 'pointer',
+            width: '100%', padding: '14px', borderRadius: 30,
+            background: partner
+              ? 'rgba(155,133,224,0.14)'
+              : 'linear-gradient(135deg, #F0A8C4 0%, #9B85E0 100%)',
+            border: partner ? '1.5px solid rgba(155,133,224,0.32)' : 'none',
+            color: '#fff', fontSize: 15, fontWeight: 600, cursor: 'pointer',
             fontFamily: 'Outfit, sans-serif',
-            backdropFilter: 'blur(12px)',
-            boxShadow: '0 8px 32px rgba(240,168,196,0.15)',
-            letterSpacing: 0.3, transition: 'all 0.2s',
+            backdropFilter: partner ? 'blur(12px)' : 'none',
+            boxShadow: partner
+              ? '0 4px 16px rgba(155,133,224,0.18)'
+              : '0 8px 36px rgba(155,133,224,0.55)',
+            letterSpacing: 0.3, transition: 'box-shadow 0.25s, transform 0.15s',
           }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(240,168,196,0.38), rgba(155,133,224,0.38))'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(240,168,196,0.28)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'linear-gradient(135deg, rgba(240,168,196,0.25), rgba(155,133,224,0.25))'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(240,168,196,0.15)'; }}
+          onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = partner ? '0 6px 22px rgba(155,133,224,0.28)' : '0 12px 44px rgba(155,133,224,0.70)'; }}
+          onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)';    e.currentTarget.style.boxShadow = partner ? '0 4px 16px rgba(155,133,224,0.18)' : '0 8px 36px rgba(155,133,224,0.55)'; }}
         >
-          ⊕ {partner ? `Change Partner (${partner.name})` : 'Add Partner'}
+          {partner ? `Change Partner (${partner.name})` : 'Add Partner'}
         </button>
       </div>
 
-      {/* Compatibility scores */}
+      {/* ── Compatibility score rings ── */}
       {compat && (
-        <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.sm}px` }}>
-          <div style={{ textAlign: 'center', fontSize: 22, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm + 2 }}>
-            {compat}% <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>overall match</span>
+        <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px` }}>
+          <div style={{ textAlign: 'center', fontSize: 21, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md }}>
+            {compat}%{' '}
+            <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>overall match</span>
           </div>
-          {[
-            { label: 'Love',       score: loveScore,   color: 'linear-gradient(90deg,#F0A8C4,#e06090)' },
-            { label: 'Friendship', score: friendScore,  color: 'linear-gradient(90deg,#9B85E0,#6a9ee0)' },
-          ].map(({ label, score, color }) => (
-            <div key={label} style={{ marginBottom: SPACING.sm }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: SPACING.xs }}>
-                {/* muted (0.65) replaces old 0.60 — consistent token use */}
-                <span style={{ fontSize: 12, color: PALETTE.muted }}>{label}</span>
-                <span style={{ fontSize: 12, fontWeight: 600, color: PALETTE.text }}>{score}%</span>
-              </div>
-              <div role="progressbar" aria-valuenow={score} aria-valuemin={0} aria-valuemax={100} aria-label={`${label} compatibility`} style={{ height: 5, background: 'rgba(255,255,255,0.1)', borderRadius: 3, overflow: 'hidden' }}>
-                <div style={{ width: `${score}%`, height: '100%', background: color, borderRadius: 3, transition: 'width 1s ease' }} />
-              </div>
-            </div>
-          ))}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
+            <CircularProgress key="compat-love"   value={loveScore}   label="Love"       color={PALETTE.ringLove} size={80} />
+            <CircularProgress key="compat-friend" value={friendScore}  label="Friendship" color={PALETTE.lavender} size={80} />
+          </div>
         </div>
       )}
 
-      {/* Descriptive text */}
-      <div style={{ padding: `0 ${SPACING.xxl}px`, flex: 1 }}>
-        <div style={{ fontSize: 18, fontWeight: 600, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.3 }}>
-          {partner ? `${mySign.name} & ${partner.name}` : 'Test compatibility in love and friendship'}
+      {/* ── Narrative copy ── */}
+      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px`, flex: 1 }}>
+        <div style={{ fontSize: 16, fontWeight: 600, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.3 }}>
+          {partner ? `${mySign.name} & ${partner.name}` : 'Discover cosmic connections'}
         </div>
-        {/* muted (0.65) replaces old 0.50 — improves readability without losing hierarchy */}
-        <p style={{ fontSize: 13, lineHeight: 1.65, color: PALETTE.muted, margin: 0 }}>
+        <p style={{ fontSize: 13, lineHeight: 1.75, color: PALETTE.muted, margin: 0 }}>
           {partner
             ? `${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary' : 'challenging but growth-filled'} bond. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension'}.`
             : 'Discover cosmic connections. Add a partner to reveal the celestial forces at work between your signs.'}
@@ -743,8 +787,10 @@ function CompatibilityScreen({ userSign }) {
           aria-modal="true"
           aria-label="Choose your partner's zodiac sign"
           style={{
-            position: 'absolute', inset: 0, background: 'rgba(13,13,43,0.95)',
-            backdropFilter: 'blur(20px)', zIndex: 100, display: 'flex', flexDirection: 'column',
+            position: 'absolute', inset: 0,
+            background: 'rgba(10,10,34,0.97)',
+            backdropFilter: 'blur(20px)', zIndex: 100,
+            display: 'flex', flexDirection: 'column',
             borderRadius: 'inherit',
           }}
         >
@@ -756,8 +802,6 @@ function CompatibilityScreen({ userSign }) {
               style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: PALETTE.muted }}
             >✕</button>
           </div>
-
-          {/* Sign grid — 3 columns with consistent SPACING.sm (8px) gap */}
           <div style={{
             display: 'grid', gridTemplateColumns: 'repeat(3,1fr)',
             gap: SPACING.sm + 2,
@@ -767,7 +811,6 @@ function CompatibilityScreen({ userSign }) {
             {ZODIAC_SIGNS.map(z => {
               const isSelected  = partnerSign === z.name;
               const isSelecting = selecting === z.name;
-
               return (
                 <button
                   key={z.name}
@@ -776,40 +819,35 @@ function CompatibilityScreen({ userSign }) {
                   aria-label={`Select ${z.name}, ${z.dates}`}
                   disabled={!!selecting}
                   style={{
-                    background: isSelected
-                      ? 'linear-gradient(135deg,#9B85E0,#F0A8C4)'
-                      : 'rgba(255,255,255,0.06)',
-                    border: `1px solid ${isSelecting ? PALETTE.lavender : 'rgba(255,255,255,0.1)'}`,
+                    background: isSelected ? 'linear-gradient(135deg,#9B85E0,#F0A8C4)' : 'rgba(255,255,255,0.06)',
+                    border: `1px solid ${isSelecting ? PALETTE.lavender : isSelected ? 'transparent' : 'rgba(255,255,255,0.10)'}`,
                     borderRadius: 16,
                     padding: `${SPACING.md}px ${SPACING.sm}px`,
                     cursor: selecting ? 'default' : 'pointer',
                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.sm - 2,
                     transition: 'all 0.2s', fontFamily: 'Outfit, sans-serif',
-                    // Scale-down feedback when this specific sign is being confirmed
                     transform: isSelecting ? 'scale(0.95)' : 'scale(1)',
-                    opacity: selecting && !isSelecting ? 0.5 : 1,
+                    opacity: selecting && !isSelecting ? 0.45 : 1,
                   }}
                 >
                   {isSelecting ? (
-                    // Loading micro-interaction: pulsing ring confirms action was registered
-                    <div
-                      aria-label="Loading..."
-                      style={{
-                        width: 52, height: 52, borderRadius: '50%',
-                        border: `3px solid ${PALETTE.lavender}`,
-                        borderTopColor: 'transparent',
-                        animation: 'spin 0.7s linear infinite',
-                      }}
-                    />
+                    <div aria-label="Loading..." style={{
+                      width: 44, height: 44, borderRadius: '50%',
+                      border: `3px solid ${PALETTE.lavender}`, borderTopColor: 'transparent',
+                      animation: 'spin 0.7s linear infinite',
+                    }} />
                   ) : (
-                    <img
-                      src={`images/icon-${z.name.toLowerCase()}.png`}
-                      alt=""
-                      style={{ width: 52, height: 52, objectFit: 'contain' }}
-                    />
+                    <div style={{
+                      width: 44, height: 44, borderRadius: '50%',
+                      background: isSelected ? 'rgba(255,255,255,0.22)' : 'rgba(155,133,224,0.14)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: isSelected ? '#fff' : 'rgba(200,180,255,0.85)',
+                    }}>
+                      <SignGlyph name={z.name} size={24} />
+                    </div>
                   )}
-                  <span style={{ fontSize: 12, color: PALETTE.text, fontWeight: 500 }}>{z.name}</span>
-                  <span style={{ fontSize: 10, color: PALETTE.muted }}>{z.dates.split('–')[0].trim()}</span>
+                  <span style={{ fontSize: 11, color: PALETTE.text, fontWeight: 500 }}>{z.name}</span>
+                  <span style={{ fontSize: 9, color: PALETTE.muted }}>{z.dates.split('–')[0].trim()}</span>
                 </button>
               );
             })}
