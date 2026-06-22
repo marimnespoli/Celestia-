@@ -77,26 +77,19 @@ const TWEAK_DEFAULTS = {
 };
 
 function App() {
-  const [tab, setTab]             = React.useState('horoscope');
-  const [viewSign, setViewSign]   = React.useState(null);
-  const [tweaks, setTweaks]       = React.useState(TWEAK_DEFAULTS);
+  const [tab, setTab]               = React.useState('horoscope');
+  const [tweaks, setTweaks]         = React.useState(TWEAK_DEFAULTS);
   const [showTweaks, setShowTweaks] = React.useState(false);
 
-  const [userSign, setUserSign]     = React.useState(() => localStorage.getItem('celestia_sign') || null);
-  const [birthDate, setBirthDate]   = React.useState(() => localStorage.getItem('celestia_bdate') || '');
-  const [birthTime, setBirthTime]   = React.useState(() => localStorage.getItem('celestia_btime') || '');
+  const [userSign,   setUserSign]   = React.useState(() => localStorage.getItem('celestia_sign')  || null);
+  const [birthDate,  setBirthDate]  = React.useState(() => localStorage.getItem('celestia_bdate') || '');
+  const [birthTime,  setBirthTime]  = React.useState(() => localStorage.getItem('celestia_btime') || '');
 
   const handleSave = (sign, date, time) => {
     setUserSign(sign); setBirthDate(date); setBirthTime(time);
     localStorage.setItem('celestia_sign', sign);
     localStorage.setItem('celestia_bdate', date);
     localStorage.setItem('celestia_btime', time);
-  };
-
-  const handleSelectSign = (name) => {
-    const sign = ZODIAC_SIGNS.find(z => z.name === name);
-    setViewSign(sign);
-    setTab('horoscope');
   };
 
   React.useEffect(() => {
@@ -116,11 +109,6 @@ function App() {
   };
 
   React.useEffect(() => {
-    const last = localStorage.getItem('celestia_lastSign');
-    if (last) {
-      const s = ZODIAC_SIGNS.find(z => z.name === last);
-      if (s) setViewSign(s);
-    }
     const lastTab = localStorage.getItem('celestia_tab');
     if (lastTab) setTab(lastTab);
   }, []);
@@ -128,22 +116,14 @@ function App() {
   const goTab = (t) => {
     setTab(t);
     localStorage.setItem('celestia_tab', t);
-    if (t !== 'horoscope') setViewSign(null);
   };
 
-  React.useEffect(() => {
-    if (viewSign) localStorage.setItem('celestia_lastSign', viewSign.name);
-  }, [viewSign]);
-
+  // DashboardScreen replaces the two-step HomeScreen → HoroscopeScreen flow.
+  // All sign exploration and period switching is now handled inline.
   const renderScreen = () => {
-    if (tab === 'horoscope') {
-      if (viewSign) {
-        return <HoroscopeScreen key={viewSign.name} sign={viewSign} onBack={() => setViewSign(null)} />;
-      }
-      return <HomeScreen userSign={userSign} onSelectSign={handleSelectSign} />;
-    }
+    if (tab === 'horoscope')     return <DashboardScreen userSign={userSign} />;
     if (tab === 'compatibility') return <CompatibilityScreen userSign={userSign || 'Aries'} />;
-    if (tab === 'settings')     return <SettingsScreen userSign={userSign} birthDate={birthDate} birthTime={birthTime} onSave={handleSave} />;
+    if (tab === 'settings')      return <SettingsScreen userSign={userSign} birthDate={birthDate} birthTime={birthTime} onSave={handleSave} />;
   };
 
   return (
