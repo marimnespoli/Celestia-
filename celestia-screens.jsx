@@ -600,16 +600,15 @@ function CompatibilityScreen({ userSign }) {
   const loveScore   = compat ? Math.min(99, Math.max(35, compat + ((i1 * 5 + i2 * 3) % 21) - 10)) : null;
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
 
-  const orbR = 90;
   const cx = 160, cy = 128;
   const toRad = d => d * Math.PI / 180;
-  const partnerX = cx + orbR * Math.cos(toRad(angle));
-  const partnerY = cy + orbR * Math.sin(toRad(angle));
-  const myX = cx + orbR * Math.cos(toRad(angle + 180));
-  const myY = cy + orbR * Math.sin(toRad(angle + 180));
-
-  // Pulse opacity when waiting for partner; steady when connected
-  const nebulaPulse = partner ? 0.72 : 0.52 + 0.28 * Math.sin(toRad(angle * 2.2));
+  const ERX = 95, ERY = 30;
+  const E1R = toRad(-28);
+  const E2R = toRad(28);
+  const myX = cx + ERX * Math.cos(toRad(angle)) * Math.cos(E1R) - ERY * Math.sin(toRad(angle)) * Math.sin(E1R);
+  const myY = cy + ERX * Math.cos(toRad(angle)) * Math.sin(E1R) + ERY * Math.sin(toRad(angle)) * Math.cos(E1R);
+  const partnerX = cx + ERX * Math.cos(toRad(angle + 180)) * Math.cos(E2R) - ERY * Math.sin(toRad(angle + 180)) * Math.sin(E2R);
+  const partnerY = cy + ERX * Math.cos(toRad(angle + 180)) * Math.sin(E2R) + ERY * Math.sin(toRad(angle + 180)) * Math.cos(E2R);
 
   const handleSelectSign = (name) => {
     setSelecting(name);
@@ -634,195 +633,119 @@ function CompatibilityScreen({ userSign }) {
       {/* ── Orbital canvas ── */}
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
-          <defs>
-            {/* Only one subtle filter — for the brightest star dots, nothing else */}
-            <filter id="cStarGlow" x="-150%" y="-150%" width="400%" height="400%">
-              <feGaussianBlur stdDeviation="1.6" result="blur" />
-              <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
-            </filter>
-          </defs>
 
-          {/* Background stars — naturalistic white/barely-tinted points, no neon */}
+          {/* Background stars */}
           {[
-            {x:28,y:36,r:1.5},{x:292,y:28,r:2.2},{x:18,y:198,r:1},
-            {x:304,y:215,r:1.5},{x:162,y:14,r:1},{x:76,y:254,r:2.5},
-            {x:242,y:248,r:1},{x:55,y:140,r:1.5},{x:268,y:100,r:1},
-            {x:140,y:220,r:1},{x:38,y:80,r:0.8},{x:285,y:160,r:0.8},
-            {x:180,y:240,r:1.2},{x:95,y:18,r:1},
-          ].map((p,i) => (
+            {x:28,y:36,r:1.2},{x:292,y:28,r:1.8},
+            {x:18,y:198,r:0.9},{x:304,y:215,r:1.2},
+            {x:162,y:14,r:0.8},{x:76,y:252,r:1.5},
+            {x:242,y:248,r:0.8},{x:55,y:140,r:1},
+            {x:268,y:100,r:0.8},{x:95,y:18,r:1},
+            {x:38,y:80,r:0.7},{x:285,y:160,r:0.7},
+          ].map((p, i) => (
             <circle key={i} cx={p.x} cy={p.y} r={p.r}
               fill="#fff"
-              opacity={0.35 + 0.28 * Math.sin(toRad(angle * 0.75 + i * 38))}
-              filter={p.r >= 2 ? 'url(#cStarGlow)' : undefined} />
+              opacity={0.20 + 0.16 * Math.sin(toRad(angle * 0.6 + i * 42))} />
           ))}
 
-          {/* Colored accent dots — scattered pink/purple points matching reference style */}
+          {/* Crossing ellipses — two tilted orbital rings */}
+          <ellipse cx={cx} cy={cy} rx={95} ry={30}
+            fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.9"
+            transform={`rotate(-28, ${cx}, ${cy})`} />
+          <ellipse cx={cx} cy={cy} rx={95} ry={30}
+            fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.9"
+            transform={`rotate(28, ${cx}, ${cy})`} />
+
+          {/* Center anchor dot */}
+          <circle cx={cx} cy={cy} r={2.5} fill="rgba(255,255,255,0.50)" />
+
+          {/* 4-pointed sparkles at the ellipse intersection points */}
           {[
-            {x:62, y:54, r:5,   c:'rgba(215,140,175,0.62)'},
-            {x:257,y:50, r:4,   c:'rgba(125,105,205,0.62)'},
-            {x:44, y:195,r:4,   c:'rgba(215,140,175,0.52)'},
-            {x:222,y:184,r:3.5, c:'rgba(125,105,205,0.48)'},
-            {x:140,y:226,r:3,   c:'rgba(255,255,255,0.65)'},
-            {x:190,y:42, r:2.5, c:'rgba(215,140,175,0.42)'},
-          ].map((p,i) => (
-            <circle key={`acc-${i}`} cx={p.x} cy={p.y} r={p.r} fill={p.c} />
-          ))}
-
-          {/* Outer orbit circle — hairline, barely visible system boundary */}
-          <circle cx={cx} cy={cy} r={116} stroke="rgba(200,185,165,0.14)" strokeWidth="0.6" fill="none" strokeDasharray="5 9" />
-
-          {/* Inner orbit ring — hairline, slightly more presence than outer */}
-          <circle cx={cx} cy={cy} r={orbR} stroke="rgba(200,185,165,0.24)" strokeWidth="0.7" fill="none" strokeDasharray="6 5" />
-
-          {/* Comet arc — hairline sweeping indicator */}
-          {!partner && (() => {
-            const circ = 2 * Math.PI * orbR;
-            const arcLen = 55;
+            { x: cx, y: cy - 34, s: 5.5, op: 0.72 },
+            { x: cx, y: cy + 34, s: 5.5, op: 0.72 },
+          ].map((sp, i) => {
+            const s = sp.s, p = s * 0.14;
             return (
-              <circle cx={cx} cy={cy} r={orbR}
-                fill="none"
-                stroke="rgba(255,255,255,0.28)"
-                strokeWidth="0.6"
-                strokeLinecap="round"
-                strokeDasharray={`${arcLen} ${circ - arcLen}`}
-                strokeDashoffset={-(angle * circ / 360) + arcLen}
-              />
-            );
-          })()}
-
-          {/* ── Bézier arc connections — lens-shaped geometric web ──
-              Two quadratic curves bow to opposite sides of the node axis.
-              Control points offset perpendicularly from the canvas center so both
-              arcs curve gracefully around the compass rose.
-              Drawn here so they sit behind both node groups. */}
-          {partner && (() => {
-            const dx   = partnerX - myX;
-            const dy   = partnerY - myY;
-            const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-            // Arc start/end: on each node's outer dashed ring (r=37), facing inward
-            const sx = myX      + 37 * dx / dist;
-            const sy = myY      + 37 * dy / dist;
-            const ex = partnerX - 37 * dx / dist;
-            const ey = partnerY - 37 * dy / dist;
-            // Perpendicular unit vector (rotates with the orbit)
-            const px = -dy / dist;
-            const py =  dx / dist;
-            // Control points: 42px either side of canvas center
-            const b = 42;
-            const cp1x = cx + b * px;  const cp1y = cy + b * py;
-            const cp2x = cx - b * px;  const cp2y = cy - b * py;
-            return (
-              <g>
-                <path d={`M ${sx} ${sy} Q ${cp1x} ${cp1y} ${ex} ${ey}`}
-                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.6" />
-                <path d={`M ${sx} ${sy} Q ${cp2x} ${cp2y} ${ex} ${ey}`}
-                  fill="none" stroke="rgba(200,185,165,0.26)" strokeWidth="0.6" />
+              <g key={`isp-${i}`} transform={`translate(${sp.x},${sp.y})`}>
+                <path
+                  d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
+                  fill={`rgba(255,255,255,${sp.op})`}
+                />
               </g>
             );
-          })()}
+          })}
 
-          {/* ── Central compass rose — flat geometric illustration, no glow, no gradients ── */}
-          {(() => {
-            const rot = angle * 0.10; // near-static drift
-            return (
-              <g>
-                {/* Four long cardinal diamond rays — heavier stroke, these are the focal axis */}
-                {[0, 90, 180, 270].map(deg => {
-                  const a  = toRad(deg + rot);
-                  const sa = toRad(deg + rot + 90);
-                  const tip  = { x: cx + 44 * Math.cos(a), y: cy + 44 * Math.sin(a) };
-                  const base = { x: cx +  6 * Math.cos(a), y: cy +  6 * Math.sin(a) };
-                  const mid  = { x: cx + 22 * Math.cos(a), y: cy + 22 * Math.sin(a) };
-                  const lp   = { x: mid.x + 5.5 * Math.cos(sa), y: mid.y + 5.5 * Math.sin(sa) };
-                  const rp   = { x: mid.x - 5.5 * Math.cos(sa), y: mid.y - 5.5 * Math.sin(sa) };
-                  return (
-                    <path key={deg}
-                      d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
-                      fill="rgba(205,185,160,0.52)"
-                      stroke="rgba(225,210,190,0.50)" strokeWidth="0.9" />
-                  );
-                })}
-                {/* Four short diagonal diamond rays — finer stroke, secondary rhythm */}
-                {[45, 135, 225, 315].map(deg => {
-                  const a  = toRad(deg + rot);
-                  const sa = toRad(deg + rot + 90);
-                  const tip  = { x: cx + 27 * Math.cos(a), y: cy + 27 * Math.sin(a) };
-                  const base = { x: cx +  5 * Math.cos(a), y: cy +  5 * Math.sin(a) };
-                  const mid  = { x: cx + 14 * Math.cos(a), y: cy + 14 * Math.sin(a) };
-                  const lp   = { x: mid.x + 3.5 * Math.cos(sa), y: mid.y + 3.5 * Math.sin(sa) };
-                  const rp   = { x: mid.x - 3.5 * Math.cos(sa), y: mid.y - 3.5 * Math.sin(sa) };
-                  return (
-                    <path key={deg}
-                      d={`M ${base.x} ${base.y} L ${lp.x} ${lp.y} L ${tip.x} ${tip.y} L ${rp.x} ${rp.y} Z`}
-                      fill="rgba(205,185,160,0.30)"
-                      stroke="rgba(220,205,185,0.25)" strokeWidth="0.4" />
-                  );
-                })}
-                {/* Center ring + dot */}
-                <circle cx={cx} cy={cy} r={9} fill="none" stroke="rgba(220,205,185,0.42)" strokeWidth="1" />
-                <circle cx={cx} cy={cy} r={3.5} fill="rgba(225,210,190,0.72)" />
-              </g>
-            );
-          })()}
-
-          {/* ── Partner sign node — layered orb: outer dashed ring + inner solid circle ── */}
+          {/* Partner node — anchored on ellipse 2 */}
           {partner ? (
-            <g transform={`translate(${partnerX},${partnerY})`}>
-              {/* Outer orbital ring — hairline dashed */}
-              <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.26)" strokeWidth="0.6" strokeDasharray="3 4" />
-              {/* Inner circle — 1.5px anchor, stays visually dominant */}
-              <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
-              <foreignObject x="-14" y="-14" width="28" height="28">
+            <g>
+              {[{dx:16,dy:-15,s:3.5,op:0.55},{dx:-18,dy:10,s:2.5,op:0.38}].map((sp, i) => {
+                const x = partnerX + sp.dx, y = partnerY + sp.dy, s = sp.s, p = s * 0.14;
+                return (
+                  <g key={`psp-${i}`} transform={`translate(${x},${y})`}>
+                    <path d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
+                      fill={`rgba(255,255,255,${sp.op})`} />
+                  </g>
+                );
+              })}
+              <circle cx={partnerX} cy={partnerY} r={22}
+                fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.36)" strokeWidth="1.2" />
+              <foreignObject x={partnerX - 13} y={partnerY - 13} width="26" height="26">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
-                  <SignGlyph name={partner.name} size={18} />
+                  <SignGlyph name={partner.name} size={17} />
                 </div>
               </foreignObject>
+              {(() => {
+                const ang = Math.atan2(partnerY - cy, partnerX - cx);
+                const lx = partnerX + 36 * Math.cos(ang);
+                const ly = partnerY + 36 * Math.sin(ang);
+                return (
+                  <text x={lx} y={ly + 4} textAnchor="middle" fontSize="8"
+                    fill="rgba(255,255,255,0.50)" fontFamily="Outfit,sans-serif" letterSpacing="1.4">
+                    {partner.name.toUpperCase()}
+                  </text>
+                );
+              })()}
             </g>
           ) : (
-            <g transform={`translate(${partnerX},${partnerY})`}>
-              {/* Outer ring on ghost slot — hairline */}
-              <circle cx="0" cy="0" r="33" fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6" strokeDasharray="3 5" />
-              {/* Inner dashed invite circle — hairline */}
-              <circle cx="0" cy="0" r="22" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" strokeDasharray="4 3" />
-              <text x="0" y="6" textAnchor="middle" fontSize="16" fill="rgba(255,255,255,0.38)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
+            <g>
+              <circle cx={partnerX} cy={partnerY} r={20}
+                fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8" strokeDasharray="3 4" />
+              <text x={partnerX} y={partnerY + 5.5} textAnchor="middle" fontSize="13"
+                fill="rgba(255,255,255,0.28)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
-          {/* ── My sign node — same layered orb system ── */}
-          <g transform={`translate(${myX},${myY})`}>
-            {/* Outer orbital dashed ring — hairline */}
-            <circle cx="0" cy="0" r="37" fill="none" stroke="rgba(255,255,255,0.26)" strokeWidth="0.6" strokeDasharray="3 4" />
-            {/* Inner solid circle — stays 1.5px, the visual anchor of the composition */}
-            <circle cx="0" cy="0" r="26" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.35)" strokeWidth="1.5" />
-            <foreignObject x="-14" y="-14" width="28" height="28">
+          {/* My sign node — anchored on ellipse 1 */}
+          <g>
+            {[{dx:-17,dy:-15,s:4,op:0.62},{dx:18,dy:12,s:2.5,op:0.42}].map((sp, i) => {
+              const x = myX + sp.dx, y = myY + sp.dy, s = sp.s, p = s * 0.14;
+              return (
+                <g key={`msp-${i}`} transform={`translate(${x},${y})`}>
+                  <path d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
+                    fill={`rgba(255,255,255,${sp.op})`} />
+                </g>
+              );
+            })}
+            <circle cx={myX} cy={myY} r={22}
+              fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.44)" strokeWidth="1.4" />
+            <foreignObject x={myX - 13} y={myY - 13} width="26" height="26">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
-                <SignGlyph name={mySign.name} size={18} />
+                <SignGlyph name={mySign.name} size={17} />
               </div>
             </foreignObject>
-          </g>
-
-          {/* Sign name labels — always radiate outward from canvas center, never inward */}
-          {(() => {
-            const labelR = orbR + 50; // 50px beyond orbit center
-            const myLabelX  = cx + labelR * Math.cos(toRad(angle + 180));
-            const myLabelY  = cy + labelR * Math.sin(toRad(angle + 180));
-            const ptLabelX  = partner ? cx + labelR * Math.cos(toRad(angle)) : 0;
-            const ptLabelY  = partner ? cy + labelR * Math.sin(toRad(angle))  : 0;
-            return (
-              <React.Fragment>
-                <text x={myLabelX} y={myLabelY + 4} textAnchor="middle" fontSize="8.5"
-                  fill="rgba(255,255,255,0.46)" fontFamily="Outfit,sans-serif" letterSpacing="1.2">
+            {(() => {
+              const ang = Math.atan2(myY - cy, myX - cx);
+              const lx = myX + 36 * Math.cos(ang);
+              const ly = myY + 36 * Math.sin(ang);
+              return (
+                <text x={lx} y={ly + 4} textAnchor="middle" fontSize="8"
+                  fill="rgba(255,255,255,0.50)" fontFamily="Outfit,sans-serif" letterSpacing="1.4">
                   {mySign.name.toUpperCase()}
                 </text>
-                {partner && (
-                  <text x={ptLabelX} y={ptLabelY + 4} textAnchor="middle" fontSize="8.5"
-                    fill="rgba(255,255,255,0.46)" fontFamily="Outfit,sans-serif" letterSpacing="1.2">
-                    {partner.name.toUpperCase()}
-                  </text>
-                )}
-              </React.Fragment>
-            );
-          })()}
+              );
+            })()}
+          </g>
+
         </svg>
       </div>
 
