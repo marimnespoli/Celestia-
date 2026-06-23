@@ -633,17 +633,17 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
-          {/* Two crossing orbits — same size, same dash style */}
+          {/* Two crossing orbits — same size, solid */}
           <circle cx={c1x} cy={c1y} r={ORB_R} fill="none"
-            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" strokeDasharray="5 4" />
+            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" />
           <circle cx={c2x} cy={c2y} r={ORB_R} fill="none"
-            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" strokeDasharray="5 4" />
+            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" />
 
           {/* Partner node */}
           {partner ? (
             <g>
               <circle cx={partnerX} cy={partnerY} r={34}
-                fill="rgba(185,88,168,0.88)" stroke="rgba(255,255,255,0.28)" strokeWidth="1.0" />
+                fill="none" stroke="rgba(255,255,255,0.50)" strokeWidth="1.0" strokeDasharray="3 2" />
               <foreignObject x={partnerX - 20} y={partnerY - 20} width="40" height="40">
                 <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
                   <SignGlyph name={partner.name} size={20} />
@@ -673,7 +673,7 @@ function CompatibilityScreen({ userSign }) {
           {/* My sign node */}
           <g>
             <circle cx={myX} cy={myY} r={34}
-              fill="rgba(92,72,195,0.90)" stroke="rgba(255,255,255,0.32)" strokeWidth="1.0" />
+              fill="none" stroke="rgba(255,255,255,0.72)" strokeWidth="1.0" strokeDasharray="3 2" />
             <foreignObject x={myX - 20} y={myY - 20} width="40" height="40">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.96)' }}>
                 <SignGlyph name={mySign.name} size={20} />
