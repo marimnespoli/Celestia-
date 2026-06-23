@@ -801,7 +801,7 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Empty state ── */}
       {!partner ? (
-        <div style={{ padding: `16px ${SPACING.xxl}px 96px`, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
+        <div style={{ padding: `16px ${SPACING.xxl}px 96px`, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', textAlign: 'center' }}>
 
           <div style={{ marginBottom: SPACING.xxl }}>
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
@@ -836,7 +836,7 @@ function CompatibilityScreen({ userSign }) {
           </div>
 
           <p style={{
-            textAlign: 'center', margin: `${SPACING.lg}px 0 0`,
+            textAlign: 'center', margin: `${SPACING['3xl']}px 0 0`,
             fontSize: 11, letterSpacing: 0.5, fontStyle: 'italic', fontWeight: 400,
             color: 'rgba(200,210,240,0.85)',
           }}>
