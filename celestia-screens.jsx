@@ -816,7 +816,7 @@ function CompatibilityScreen({ userSign }) {
             </div>
 
             <p style={{
-              fontSize: 12, lineHeight: 1.6, letterSpacing: '0.02em',
+              fontSize: 13, lineHeight: 1.55,
               color: 'rgba(200,210,240,0.80)', margin: '0 0 32px', fontWeight: 300,
             }}>
               Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
