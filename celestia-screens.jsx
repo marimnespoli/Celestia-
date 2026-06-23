@@ -886,28 +886,42 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave }) {
 
       <div style={{ padding: `0 ${SPACING.xl}px`, display: 'flex', flexDirection: 'column', gap: SPACING.xl }}>
 
-        {/* ── Inputs — side by side ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: SPACING.sm }}>
-          <section aria-label="Birth date">
-            <label htmlFor="birth-date" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
-              Birth Date
-            </label>
-            <input
-              id="birth-date" type="date" value={date}
-              onChange={e => { setDate(e.target.value); setSaved(false); }}
-              style={inputStyle}
-            />
-          </section>
-          <section aria-label="Birth time">
-            <label htmlFor="birth-time" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
-              Birth Time
-            </label>
-            <input
-              id="birth-time" type="time" value={time}
-              onChange={e => { setTime(e.target.value); setSaved(false); }}
-              style={inputStyle}
-            />
-          </section>
+        {/* ── Inputs + sun sign inline feedback ── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: SPACING.sm - 2 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: SPACING.sm }}>
+            <section aria-label="Birth date">
+              <label htmlFor="birth-date" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
+                Birth Date
+              </label>
+              <input
+                id="birth-date" type="date" value={date}
+                onChange={e => { setDate(e.target.value); setSaved(false); }}
+                style={inputStyle}
+              />
+            </section>
+            <section aria-label="Birth time">
+              <label htmlFor="birth-time" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
+                Birth Time
+              </label>
+              <input
+                id="birth-time" type="time" value={time}
+                onChange={e => { setTime(e.target.value); setSaved(false); }}
+                style={inputStyle}
+              />
+            </section>
+          </div>
+          {date && sunSignName && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: SPACING.xs + 2,
+              padding: `${SPACING.xs + 2}px ${SPACING.md}px`,
+              background: 'rgba(240,168,196,0.08)', borderRadius: 10,
+              border: '1px solid rgba(240,168,196,0.18)',
+            }}>
+              <img src={`images/icon-${sunSignName.toLowerCase()}.png`} alt="" style={{ width: 18, height: 18, objectFit: 'contain' }} />
+              <span style={{ fontSize: 11, color: PALETTE.muted, letterSpacing: 0.3 }}>Sun sign</span>
+              <span style={{ fontSize: 11, fontWeight: 700, color: PALETTE.pink, marginLeft: 2 }}>{sunSignName}</span>
+            </div>
+          )}
         </div>
 
         {/* ── Big Three — hero card ── */}
@@ -953,19 +967,19 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave }) {
                 <span style={{ textTransform: 'uppercase', letterSpacing: 1.2 }}>Explore your traits</span>
                 <span style={{ fontSize: 12, display: 'inline-block', transition: 'transform 0.25s', transform: traitOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
               </button>
-              {traitOpen && (
-                <div style={{ display: 'flex', gap: SPACING.xs + 2, flexWrap: 'wrap', marginTop: SPACING.sm }}>
+              <div style={{ maxHeight: traitOpen ? '200px' : '0px', overflow: 'hidden', transition: 'max-height 0.30s ease' }}>
+                <div style={{ display: 'flex', gap: SPACING.xs + 2, flexWrap: 'wrap', paddingTop: SPACING.sm }}>
                   {(sunSign.traits || []).map(t => (
-                    <span key={'s-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(240,168,196,0.15)', color: PALETTE.pink, border: '1px solid rgba(240,168,196,0.25)' }}>{t}</span>
+                    <span key={'s-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, fontWeight: 600, background: 'rgba(240,168,196,0.15)', color: PALETTE.pink, border: '1px solid rgba(240,168,196,0.25)' }}>{t}</span>
                   ))}
                   {(moonSign?.traits || []).slice(0,2).map(t => (
-                    <span key={'m-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(155,133,224,0.15)', color: '#B8A4E8', border: '1px solid rgba(155,133,224,0.25)' }}>{t}</span>
+                    <span key={'m-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, fontWeight: 600, background: 'rgba(155,133,224,0.15)', color: '#B8A4E8', border: '1px solid rgba(155,133,224,0.25)' }}>{t}</span>
                   ))}
                   {(risingSign?.traits || []).slice(0,1).map(t => (
-                    <span key={'r-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(126,200,227,0.15)', color: PALETTE.ringMentality, border: '1px solid rgba(126,200,227,0.25)' }}>{t}</span>
+                    <span key={'r-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, fontWeight: 600, background: 'rgba(126,200,227,0.15)', color: PALETTE.ringMentality, border: '1px solid rgba(126,200,227,0.25)' }}>{t}</span>
                   ))}
                 </div>
-              )}
+              </div>
             </div>
           )}
         </GlassCard>
