@@ -632,21 +632,42 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
-          {/* Outer orbit — single circular path both signs travel */}
-          <circle cx={cx} cy={cy} r={96}
-            fill="none" stroke="rgba(255,255,255,0.20)" strokeWidth="0.7" />
+          {/* Star field — warm scattered points outside the ring system */}
+          {[
+            {x:18, y:22, r:1.5, c:'rgba(240,218,170,0.70)'},{x:298,y:16, r:1.2, c:'rgba(255,255,255,0.50)'},
+            {x:10, y:178,r:2.8, c:'rgba(240,218,170,0.65)'},{x:308,y:195,r:1.8, c:'rgba(255,255,255,0.52)'},
+            {x:38, y:244,r:1.5, c:'rgba(240,218,170,0.50)'},{x:278,y:248,r:1.2, c:'rgba(255,255,255,0.38)'},
+            {x:4,  y:82, r:1.0, c:'rgba(255,255,255,0.28)'},{x:316,y:128,r:1.0, c:'rgba(255,255,255,0.26)'},
+            {x:88, y:6,  r:0.9, c:'rgba(255,255,255,0.24)'},{x:228,y:10, r:1.1, c:'rgba(255,255,255,0.28)'},
+            {x:48, y:252,r:0.8, c:'rgba(255,255,255,0.20)'},{x:262,y:250,r:0.9, c:'rgba(255,255,255,0.22)'},
+            {x:5,  y:140,r:1.8, c:'rgba(240,218,170,0.45)'},{x:312,y:60, r:1.5, c:'rgba(240,218,170,0.42)'},
+            {x:92, y:48, r:0.7, c:'rgba(255,255,255,0.16)'},{x:222,y:55, r:0.7, c:'rgba(255,255,255,0.15)'},
+            {x:82, y:195,r:0.7, c:'rgba(255,255,255,0.16)'},{x:232,y:188,r:0.7, c:'rgba(255,255,255,0.14)'},
+          ].map((s, i) => <circle key={`s-${i}`} cx={s.x} cy={s.y} r={s.r} fill={s.c} />)}
 
-          {/* Concentric center rings */}
-          <circle cx={cx} cy={cy} r={52} fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={38} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={26} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={15} fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="0.7" />
-          <circle cx={cx} cy={cy} r={3.5} fill="rgba(255,255,255,0.78)" />
+          {/* Radiating spokes — 8 lines, cardinals slightly more visible */}
+          {Array.from({ length: 8 }, (_, i) => {
+            const a = toRad(i * 45);
+            const isCardinal = i % 2 === 0;
+            return (
+              <line key={`sp-${i}`}
+                x1={cx + 7 * Math.cos(a)} y1={cy + 7 * Math.sin(a)}
+                x2={cx + 96 * Math.cos(a)} y2={cy + 96 * Math.sin(a)}
+                stroke={`rgba(255,255,255,${isCardinal ? 0.18 : 0.09})`}
+                strokeWidth={isCardinal ? '0.6' : '0.5'} />
+            );
+          })}
 
-          {/* Inner tilted ellipse — passes through the concentric ring area */}
-          <ellipse cx={cx} cy={cy} rx={64} ry={22}
-            fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6"
-            transform={`rotate(20, ${cx}, ${cy})`} />
+          {/* Concentric rings — alternating solid / dashed, outer to inner */}
+          <circle cx={cx} cy={cy} r={96} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" />
+          <circle cx={cx} cy={cy} r={82} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={70} fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" strokeDasharray="5 4" />
+          <circle cx={cx} cy={cy} r={58} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={46} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" strokeDasharray="4 3" />
+          <circle cx={cx} cy={cy} r={34} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={22} fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.7" />
+          <circle cx={cx} cy={cy} r={12} fill="none" stroke="rgba(255,255,255,0.36)" strokeWidth="0.8" />
+          <circle cx={cx} cy={cy} r={3}  fill="rgba(255,255,255,0.82)" />
 
           {/* Partner node — orbiting on outer ring */}
           {partner ? (
