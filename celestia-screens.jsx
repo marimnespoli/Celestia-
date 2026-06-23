@@ -933,27 +933,27 @@ function CompatibilityScreen({ userSign }) {
             </div>
 
             {/* Harmony */}
-            <div style={{ marginBottom: SPACING.md }}>
-              <div style={{ fontSize: 9, letterSpacing: 1.6, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 600, marginBottom: SPACING.xs }}>
+            <div style={{ marginBottom: SPACING.lg }}>
+              <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 700, marginBottom: SPACING.sm }}>
                 Harmony
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.75)', margin: 0 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.88)', margin: 0 }}>
                 {harmonyText[category]}
               </p>
             </div>
 
             {/* Point of Attention */}
-            <div style={{ marginBottom: SPACING.lg }}>
-              <div style={{ fontSize: 9, letterSpacing: 1.6, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 600, marginBottom: SPACING.xs }}>
+            <div style={{ marginBottom: SPACING['3xl'] }}>
+              <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 700, marginBottom: SPACING.sm }}>
                 Point of Attention
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.55)', margin: 0 }}>
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.78)', margin: 0 }}>
                 {attentionText[category]}
               </p>
             </div>
 
             {/* Share Result */}
-            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 16 }}>
+            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 16, marginTop: SPACING['3xl'] }}>
               <button
                 onClick={() => {
                   const text = `${mySign.name} & ${partner.name}: ${compat}% cosmic compatibility ✨ — Celestia`;

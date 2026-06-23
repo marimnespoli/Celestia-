@@ -61,7 +61,7 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72, gradient
     <div
       role="img"
       aria-label={`${label}: ${value}%`}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}
     >
       <div style={{ position: 'relative', width: size, height: size }}>
         <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }} aria-hidden="true">
