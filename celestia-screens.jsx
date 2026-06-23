@@ -807,13 +807,13 @@ function CompatibilityScreen({ userSign }) {
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
               Discover your cosmic connection
             </div>
-            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(240,238,248,0.55)', margin: 0, fontWeight: 300 }}>
+            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(200,210,240,0.80)', margin: 0, fontWeight: 300 }}>
               Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
             </p>
           </div>
 
           {/* Primary CTA — ghost with gradient border */}
-          <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.55),rgba(155,133,224,0.55))', padding: '1px', borderRadius: 20 }}>
+          <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.72),rgba(155,133,224,0.72))', padding: '1px', borderRadius: 20 }}>
             <button
               onClick={() => setShowPicker(true)}
               aria-label="Connect with someone"
@@ -834,6 +834,14 @@ function CompatibilityScreen({ userSign }) {
               Connect with someone
             </button>
           </div>
+
+          <p style={{
+            textAlign: 'center', margin: `${SPACING.lg}px 0 0`,
+            fontSize: 11, letterSpacing: 0.4, fontStyle: 'italic',
+            color: 'rgba(200,210,240,0.38)',
+          }}>
+            Your cosmic connection is one click away.
+          </p>
         </div>
 
       ) : (
