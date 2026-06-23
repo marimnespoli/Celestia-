@@ -633,30 +633,6 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
-          {/* Star field — scattered white, pink and purple dots */}
-          {[
-            {x:42,  y:28,  r:1.2, c:'rgba(255,255,255,0.65)'},
-            {x:90,  y:12,  r:0.9, c:'rgba(255,255,255,0.50)'},
-            {x:178, y:20,  r:1.0, c:'rgba(255,255,255,0.55)'},
-            {x:265, y:38,  r:1.3, c:'rgba(255,255,255,0.50)'},
-            {x:305, y:88,  r:0.9, c:'rgba(255,255,255,0.40)'},
-            {x:312, y:158, r:1.2, c:'rgba(255,255,255,0.55)'},
-            {x:290, y:220, r:0.9, c:'rgba(255,255,255,0.45)'},
-            {x:235, y:248, r:1.3, c:'rgba(255,255,255,0.40)'},
-            {x:32,  y:202, r:0.9, c:'rgba(255,255,255,0.48)'},
-            {x:18,  y:138, r:1.2, c:'rgba(255,255,255,0.55)'},
-            {x:58,  y:82,  r:0.9, c:'rgba(255,255,255,0.42)'},
-            {x:145, y:238, r:1.0, c:'rgba(255,255,255,0.45)'},
-            {x:72,  y:248, r:0.8, c:'rgba(255,255,255,0.38)'},
-            {x:36,  y:196, r:5.5, c:'rgba(255,100,168,0.82)'},
-            {x:162, y:76,  r:4.5, c:'rgba(255,105,172,0.78)'},
-            {x:268, y:52,  r:3.8, c:'rgba(255,115,178,0.72)'},
-            {x:78,  y:228, r:3.2, c:'rgba(255,108,174,0.68)'},
-            {x:52,  y:48,  r:6.5, c:'rgba(125,75,215,0.85)'},
-            {x:292, y:162, r:5.5, c:'rgba(118,68,208,0.78)'},
-            {x:252, y:228, r:4.0, c:'rgba(135,85,220,0.72)'},
-          ].map((d,i) => <circle key={i} cx={d.x} cy={d.y} r={d.r} fill={d.c} />)}
-
           {/* Two crossing orbits — same size, same dash style */}
           <circle cx={c1x} cy={c1y} r={ORB_R} fill="none"
             stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" strokeDasharray="5 4" />
