@@ -632,42 +632,96 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
-          {/* Star field — warm scattered points outside the ring system */}
-          {[
-            {x:18, y:22, r:1.5, c:'rgba(240,218,170,0.70)'},{x:298,y:16, r:1.2, c:'rgba(255,255,255,0.50)'},
-            {x:10, y:178,r:2.8, c:'rgba(240,218,170,0.65)'},{x:308,y:195,r:1.8, c:'rgba(255,255,255,0.52)'},
-            {x:38, y:244,r:1.5, c:'rgba(240,218,170,0.50)'},{x:278,y:248,r:1.2, c:'rgba(255,255,255,0.38)'},
-            {x:4,  y:82, r:1.0, c:'rgba(255,255,255,0.28)'},{x:316,y:128,r:1.0, c:'rgba(255,255,255,0.26)'},
-            {x:88, y:6,  r:0.9, c:'rgba(255,255,255,0.24)'},{x:228,y:10, r:1.1, c:'rgba(255,255,255,0.28)'},
-            {x:48, y:252,r:0.8, c:'rgba(255,255,255,0.20)'},{x:262,y:250,r:0.9, c:'rgba(255,255,255,0.22)'},
-            {x:5,  y:140,r:1.8, c:'rgba(240,218,170,0.45)'},{x:312,y:60, r:1.5, c:'rgba(240,218,170,0.42)'},
-            {x:92, y:48, r:0.7, c:'rgba(255,255,255,0.16)'},{x:222,y:55, r:0.7, c:'rgba(255,255,255,0.15)'},
-            {x:82, y:195,r:0.7, c:'rgba(255,255,255,0.16)'},{x:232,y:188,r:0.7, c:'rgba(255,255,255,0.14)'},
-          ].map((s, i) => <circle key={`s-${i}`} cx={s.x} cy={s.y} r={s.r} fill={s.c} />)}
+          {/* Full crosshair — extends past the outer ring to canvas edges */}
+          <line x1={0} y1={cy} x2={320} y2={cy} stroke="rgba(255,255,255,0.30)" strokeWidth="0.75" />
+          <line x1={cx} y1={0} x2={cx} y2={258} stroke="rgba(255,255,255,0.30)" strokeWidth="0.75" />
 
-          {/* Radiating spokes — 8 lines, cardinals slightly more visible */}
-          {Array.from({ length: 8 }, (_, i) => {
-            const a = toRad(i * 45);
-            const isCardinal = i % 2 === 0;
-            return (
-              <line key={`sp-${i}`}
-                x1={cx + 7 * Math.cos(a)} y1={cy + 7 * Math.sin(a)}
-                x2={cx + 96 * Math.cos(a)} y2={cy + 96 * Math.sin(a)}
-                stroke={`rgba(255,255,255,${isCardinal ? 0.18 : 0.09})`}
-                strokeWidth={isCardinal ? '0.6' : '0.5'} />
-            );
+          {/* Diagonal spokes (45°) */}
+          {[45,135,225,315].map(d => {
+            const a = toRad(d);
+            return <line key={d}
+              x1={cx+5*Math.cos(a)} y1={cy+5*Math.sin(a)}
+              x2={cx+96*Math.cos(a)} y2={cy+96*Math.sin(a)}
+              stroke="rgba(255,255,255,0.20)" strokeWidth="0.55" />;
+          })}
+          {/* Secondary spokes (22.5°) */}
+          {[22.5,67.5,112.5,157.5,202.5,247.5,292.5,337.5].map(d => {
+            const a = toRad(d);
+            return <line key={d}
+              x1={cx+5*Math.cos(a)} y1={cy+5*Math.sin(a)}
+              x2={cx+96*Math.cos(a)} y2={cy+96*Math.sin(a)}
+              stroke="rgba(255,255,255,0.09)" strokeWidth="0.40" />;
           })}
 
-          {/* Concentric rings — alternating solid / dashed, outer to inner */}
-          <circle cx={cx} cy={cy} r={96} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.8" />
-          <circle cx={cx} cy={cy} r={82} fill="none" stroke="rgba(255,255,255,0.15)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={70} fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" strokeDasharray="5 4" />
-          <circle cx={cx} cy={cy} r={58} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={46} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" strokeDasharray="4 3" />
-          <circle cx={cx} cy={cy} r={34} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.6" />
-          <circle cx={cx} cy={cy} r={22} fill="none" stroke="rgba(255,255,255,0.28)" strokeWidth="0.7" />
-          <circle cx={cx} cy={cy} r={12} fill="none" stroke="rgba(255,255,255,0.36)" strokeWidth="0.8" />
-          <circle cx={cx} cy={cy} r={3}  fill="rgba(255,255,255,0.82)" />
+          {/* Constellation line clusters — angular paths in the inter-ring zone */}
+          <g fill="none" strokeLinejoin="round" strokeLinecap="round">
+            <path d="M 125,54 L 108,68 L 118,82 L 96,74 L 88,90"
+              stroke="rgba(255,255,255,0.30)" strokeWidth="0.65" />
+            <path d="M 96,74 L 82,66 L 78,52"
+              stroke="rgba(255,255,255,0.26)" strokeWidth="0.60" />
+            <path d="M 205,58 L 222,66 L 228,80 L 216,90 L 208,76 L 205,58"
+              stroke="rgba(255,255,255,0.28)" strokeWidth="0.60" />
+            <path d="M 222,66 L 232,56"
+              stroke="rgba(255,255,255,0.24)" strokeWidth="0.55" />
+            <path d="M 90,102 L 76,118 L 82,136 L 78,152 L 86,166 L 80,180"
+              stroke="rgba(255,255,255,0.28)" strokeWidth="0.60" />
+            <path d="M 76,118 L 66,124 L 72,136"
+              stroke="rgba(255,255,255,0.22)" strokeWidth="0.50" />
+            <path d="M 108,196 L 122,205 L 138,198 L 130,186 L 112,192"
+              stroke="rgba(255,255,255,0.24)" strokeWidth="0.55" />
+            <path d="M 160,200 L 176,208 L 192,202 L 206,190 L 198,178"
+              stroke="rgba(255,255,255,0.24)" strokeWidth="0.55" />
+            <path d="M 176,208 L 180,218"
+              stroke="rgba(255,255,255,0.20)" strokeWidth="0.50" />
+            <path d="M 238,140 L 248,156 L 240,172 L 226,180 L 234,165 L 238,140"
+              stroke="rgba(255,255,255,0.24)" strokeWidth="0.55" />
+          </g>
+
+          {/* Concentric rings — 9 rings, alternating solid / dashed */}
+          <circle cx={cx} cy={cy} r={96} fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="0.80" />
+          <circle cx={cx} cy={cy} r={86} fill="none" stroke="rgba(255,255,255,0.20)" strokeWidth="0.60" />
+          <circle cx={cx} cy={cy} r={76} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.60" strokeDasharray="5 4" />
+          <circle cx={cx} cy={cy} r={66} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.60" />
+          <circle cx={cx} cy={cy} r={56} fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.60" strokeDasharray="4 3" />
+          <circle cx={cx} cy={cy} r={46} fill="none" stroke="rgba(255,255,255,0.20)" strokeWidth="0.60" />
+          <circle cx={cx} cy={cy} r={36} fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.60" />
+          <circle cx={cx} cy={cy} r={26} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="0.60" />
+          <circle cx={cx} cy={cy} r={16} fill="none" stroke="rgba(255,255,255,0.30)" strokeWidth="0.70" />
+          <circle cx={cx} cy={cy} r={4}  fill="rgba(255,255,255,0.80)" />
+
+          {/* Top decorative burst — dotted stem + fan */}
+          {(() => {
+            const fx = cx, fy = cy - 108;
+            return (
+              <g stroke="rgba(255,255,255,0.36)" strokeDasharray="2 1.5" fill="none">
+                <line x1={fx} y1={cy - 96} x2={fx} y2={fy} strokeWidth="0.65" />
+                {[-125,-108,-90,-72,-55].map((deg, i) => {
+                  const a = toRad(deg);
+                  const l = i === 2 ? 18 : 13;
+                  return <line key={i} x1={fx} y1={fy}
+                    x2={fx + l*Math.cos(a)} y2={fy + l*Math.sin(a)}
+                    strokeWidth="0.60" />;
+                })}
+              </g>
+            );
+          })()}
+
+          {/* Bottom decorative burst — mirror */}
+          {(() => {
+            const fx = cx, fy = cy + 108;
+            return (
+              <g stroke="rgba(255,255,255,0.36)" strokeDasharray="2 1.5" fill="none">
+                <line x1={fx} y1={cy + 96} x2={fx} y2={fy} strokeWidth="0.65" />
+                {[55,72,90,108,125].map((deg, i) => {
+                  const a = toRad(deg);
+                  const l = i === 2 ? 18 : 13;
+                  return <line key={i} x1={fx} y1={fy}
+                    x2={fx + l*Math.cos(a)} y2={fy + l*Math.sin(a)}
+                    strokeWidth="0.60" />;
+                })}
+              </g>
+            );
+          })()}
 
           {/* Partner node — orbiting on outer ring */}
           {partner ? (
