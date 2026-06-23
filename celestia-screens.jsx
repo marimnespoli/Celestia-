@@ -801,7 +801,7 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Empty state ── */}
       {!partner ? (
-        <div style={{ padding: `44px ${SPACING.xxl}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ padding: `64px ${SPACING.xxl}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', flex: 1 }}>
 
           <div style={{ marginBottom: SPACING.xxl }}>
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
