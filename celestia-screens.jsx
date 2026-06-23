@@ -648,20 +648,6 @@ function CompatibilityScreen({ userSign }) {
             fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6"
             transform={`rotate(20, ${cx}, ${cy})`} />
 
-          {/* Static dot markers at key geometric positions */}
-          {[
-            { r: 96,  deg: 12,  size: 2.8, op: 0.86 },
-            { r: 96,  deg: 188, size: 1.8, op: 0.58 },
-            { r: 96,  deg: 108, size: 1.6, op: 0.48 },
-            { r: 52,  deg: -22, size: 1.6, op: 0.52 },
-            { r: 38,  deg: 214, size: 1.5, op: 0.46 },
-          ].map((d, i) => (
-            <circle key={`dot-${i}`}
-              cx={cx + d.r * Math.cos(toRad(d.deg))}
-              cy={cy + d.r * Math.sin(toRad(d.deg))}
-              r={d.size} fill={`rgba(255,255,255,${d.op})`} />
-          ))}
-
           {/* Partner node — orbiting on outer ring */}
           {partner ? (
             <g>
