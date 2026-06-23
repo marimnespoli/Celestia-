@@ -808,22 +808,25 @@ function CompatibilityScreen({ userSign }) {
           paddingBottom: 88, textAlign: 'center',
         }}>
 
-          {/* ── Single mass block — title / description / button at unified width ── */}
+          {/* ── Single mass block: all children share the same horizontal span ── */}
           <div style={{ width: 'calc(100% - 40px)' }}>
 
-            <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: 16, letterSpacing: -0.5 }}>
-              Discover your cosmic connection
+            {/* Context block — title + description grouped tight */}
+            <div style={{ marginBottom: 28 }}>
+              <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: 10, letterSpacing: -0.5 }}>
+                Discover your cosmic connection
+              </div>
+              <p style={{
+                fontSize: 12, lineHeight: 1.55, fontWeight: 300,
+                color: 'rgba(200,210,240,0.80)',
+                margin: 0, padding: 0, width: '100%', boxSizing: 'border-box',
+              }}>
+                Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
+              </p>
             </div>
 
-            <p style={{
-              fontSize: 12, lineHeight: 1.55,
-              color: 'rgba(200,210,240,0.80)', margin: '0 0 32px', fontWeight: 300,
-            }}>
-              Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
-            </p>
-
-            {/* Primary CTA — ghost with gradient border */}
-            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.72),rgba(155,133,224,0.72))', padding: '1px', borderRadius: 20 }}>
+            {/* Action block — separated from context as independent unit */}
+            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.72),rgba(155,133,224,0.72))', padding: '1px', borderRadius: 20, width: '100%', boxSizing: 'border-box' }}>
               <button
                 onClick={() => setShowPicker(true)}
                 aria-label="Connect with someone"
@@ -834,6 +837,7 @@ function CompatibilityScreen({ userSign }) {
                   cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
                   transition: 'background 0.20s, transform 0.15s',
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                  boxSizing: 'border-box',
                 }}
                 onMouseEnter={e => { e.currentTarget.style.background='rgba(155,133,224,0.18)'; e.currentTarget.style.transform='scale(1.01)'; }}
                 onMouseLeave={e => { e.currentTarget.style.background='rgba(10,8,38,0.80)'; e.currentTarget.style.transform='scale(1)'; }}
@@ -845,9 +849,10 @@ function CompatibilityScreen({ userSign }) {
               </button>
             </div>
 
+            {/* Base caption — anchored to button width */}
             <p style={{
-              margin: `${SPACING['3xl']}px 0 0`,
-              fontSize: 11, letterSpacing: 1.2, fontStyle: 'italic', fontWeight: 400,
+              margin: '20px 0 0', width: '100%', boxSizing: 'border-box',
+              fontSize: 11, letterSpacing: 0.8, fontStyle: 'italic', fontWeight: 400,
               color: 'rgba(200,210,240,0.85)',
             }}>
               Your cosmic connection is one click away.
