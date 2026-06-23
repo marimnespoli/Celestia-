@@ -600,6 +600,8 @@ function HoroscopeScreen({ sign, onBack }) {
 function CompatibilityScreen({ userSign }) {
   const [partnerSign, setPartnerSign] = React.useState(null);
   const [showPicker, setShowPicker]   = React.useState(false);
+  const [showShare, setShowShare]     = React.useState(false);
+  const [copied, setCopied]           = React.useState(false);
   const [angle, setAngle]             = React.useState(225);
   const [selecting, setSelecting]     = React.useState(null);
   const [category, setCategory]       = React.useState('Love');
@@ -628,7 +630,8 @@ function CompatibilityScreen({ userSign }) {
   const loveScore   = compat ? Math.min(99, Math.max(35, compat + ((i1 * 5 + i2 * 3) % 21) - 10)) : null;
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
   const workScore   = compat ? Math.min(99, Math.max(30, compat + ((i1 * 7 + i2 * 2) % 23) - 11)) : null;
-  const crushScore  = compat ? Math.min(99, Math.max(40, compat + ((i1 * 4 + i2 * 9) % 19) - 9))  : null;
+  const catScores   = compat ? { Love: loveScore, Friendship: friendScore, Work: workScore } : null;
+  const glowColor   = compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080';
 
   const toRad = d => d * Math.PI / 180;
   const ORB_R = 74;
@@ -644,14 +647,6 @@ function CompatibilityScreen({ userSign }) {
     setTimeout(() => { setPartnerSign(name); setSelecting(null); setShowPicker(false); }, 600);
   };
 
-  // Per-category ring config
-  const catConfig = {
-    Love:       { ring1: { v: loveScore,   l: 'Love',       c: PALETTE.ringLove,   g: ['#FFB8D6','#E0447C'] }, ring2: { v: crushScore,  l: 'Attraction', c: PALETTE.pink,        g: ['#FFD0E8','#FF6B9D'] } },
-    Friendship: { ring1: { v: friendScore, l: 'Friendship', c: PALETTE.lavender,   g: ['#C4B0FF','#6D4FBF'] }, ring2: { v: loveScore,   l: 'Warmth',     c: PALETTE.ringLove,    g: ['#FFB8D6','#E0447C'] } },
-    Work:       { ring1: { v: workScore,   l: 'Work',       c: PALETTE.ringCareer, g: ['#FFD580','#C08800'] }, ring2: { v: friendScore, l: 'Trust',      c: PALETTE.lavender,    g: ['#C4B0FF','#6D4FBF'] } },
-    Crush:      { ring1: { v: crushScore,  l: 'Attraction', c: PALETTE.pink,       g: ['#FFD0E8','#FF6B9D'] }, ring2: { v: loveScore,   l: 'Love',       c: PALETTE.ringLove,    g: ['#FFB8D6','#E0447C'] } },
-  };
-  const cfg = catConfig[category];
 
   const harmonyText = {
     Love: compat >= 80
@@ -882,104 +877,229 @@ function CompatibilityScreen({ userSign }) {
             </button>
           </div>
 
-          {/* ── Overall match + Category chips ── */}
+          {/* ── Hero: big compat number with glow ── */}
           {compat && (
-            <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.sm}px` }}>
-              <div style={{ textAlign: 'center', fontSize: 21, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md }}>
-                {compat}%{' '}
-                <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>overall match</span>
+            <div style={{ textAlign: 'center', padding: `${SPACING.xl}px 0 ${SPACING.lg}px` }}>
+              <div style={{
+                fontSize: 58, fontWeight: 800, letterSpacing: -2,
+                color: '#fff', lineHeight: 1,
+                textShadow: `0 0 40px ${glowColor}99, 0 0 90px ${glowColor}44`,
+              }}>
+                {compat}%
               </div>
-
-              {/* Category chips */}
-              <div style={{ display: 'flex', gap: SPACING.sm, justifyContent: 'center', marginBottom: SPACING.md }}>
-                {['Love', 'Friendship', 'Work', 'Crush'].map(cat => {
-                  const active = cat === category;
-                  const chipColors = { Love: PALETTE.ringLove, Friendship: PALETTE.lavender, Work: PALETTE.ringCareer, Crush: PALETTE.pink };
-                  return (
-                    <button
-                      key={cat}
-                      onClick={() => setCategory(cat)}
-                      style={{
-                        padding: `${SPACING.xs + 1}px ${SPACING.md}px`,
-                        borderRadius: 20, fontSize: 11, fontWeight: active ? 700 : 500,
-                        background: active ? `${chipColors[cat]}22` : 'rgba(255,255,255,0.06)',
-                        border: `1px solid ${active ? chipColors[cat] : 'rgba(255,255,255,0.12)'}`,
-                        color: active ? '#fff' : 'rgba(240,238,248,0.60)',
-                        cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                        boxShadow: active ? `0 0 10px 1px ${chipColors[cat]}44` : 'none',
-                        transition: 'all 0.18s',
-                      }}
-                    >
-                      {cat}
-                    </button>
-                  );
-                })}
+              <div style={{ fontSize: 10, color: PALETTE.muted, letterSpacing: 2.0, textTransform: 'uppercase', marginTop: 8 }}>
+                overall match
               </div>
-
-              {/* Score rings — update based on selected category */}
-              {cfg && (
-                <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
-                  <CircularProgress key={`${category}-r1`} value={cfg.ring1.v} label={cfg.ring1.l} color={cfg.ring1.c} size={80} gradientColors={cfg.ring1.g} />
-                  <CircularProgress key={`${category}-r2`} value={cfg.ring2.v} label={cfg.ring2.l} color={cfg.ring2.c} size={80} gradientColors={cfg.ring2.g} />
-                </div>
-              )}
             </div>
           )}
 
-          {/* ── Narrative ── */}
-          <div style={{ padding: `0 28px 96px` }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md, letterSpacing: -0.4, lineHeight: 1.3 }}>
-              {mySign.name} & {partner.name}
+          {/* ── 3 category chips with inline score ── */}
+          {compat && catScores && (
+            <div style={{ display: 'flex', gap: SPACING.sm, padding: `0 ${SPACING.xl}px`, marginBottom: SPACING.xl }}>
+              {['Love', 'Friendship', 'Work'].map(cat => {
+                const active = cat === category;
+                const chipColors = { Love: PALETTE.ringLove, Friendship: PALETTE.lavender, Work: PALETTE.ringCareer };
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setCategory(cat)}
+                    style={{
+                      flex: 1, padding: `${SPACING.sm}px ${SPACING.xs}px`,
+                      borderRadius: 14,
+                      background: active ? `${chipColors[cat]}22` : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${active ? chipColors[cat] : 'rgba(255,255,255,0.12)'}`,
+                      cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
+                      boxShadow: active ? `0 0 12px 1px ${chipColors[cat]}44` : 'none',
+                      transition: 'all 0.18s',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                    }}
+                  >
+                    <span style={{ fontSize: 10, fontWeight: active ? 700 : 500, letterSpacing: 0.4, color: active ? '#fff' : 'rgba(240,238,248,0.50)' }}>
+                      {cat}
+                    </span>
+                    <span style={{ fontSize: 15, fontWeight: 700, lineHeight: 1, color: active ? chipColors[cat] : 'rgba(255,255,255,0.22)' }}>
+                      {catScores[cat]}
+                    </span>
+                  </button>
+                );
+              })}
             </div>
+          )}
 
-            {/* Harmony */}
-            <div style={{ marginBottom: SPACING.lg }}>
-              <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 700, marginBottom: SPACING.sm }}>
-                Harmony
+          {/* ── Narrative inside glass card ── */}
+          <div style={{ padding: `0 ${SPACING.xl}px 96px` }}>
+            <GlassCard style={{ padding: SPACING.xl }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.lg, letterSpacing: -0.4, lineHeight: 1.3 }}>
+                {mySign.name} & {partner.name}
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.88)', margin: 0 }}>
-                {harmonyText[category]}
-              </p>
-            </div>
 
-            {/* Point of Attention */}
-            <div style={{ marginBottom: SPACING['3xl'] }}>
-              <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 700, marginBottom: SPACING.sm }}>
-                Point of Attention
+              {/* Harmony */}
+              <div style={{ marginBottom: SPACING.lg }}>
+                <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 700, marginBottom: SPACING.sm }}>
+                  Harmony
+                </div>
+                <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.88)', margin: 0 }}>
+                  {harmonyText[category]}
+                </p>
               </div>
-              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.78)', margin: 0 }}>
-                {attentionText[category]}
-              </p>
-            </div>
 
-            {/* Share Result */}
-            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 16, marginTop: SPACING['3xl'] }}>
-              <button
-                onClick={() => {
-                  const text = `${mySign.name} & ${partner.name}: ${compat}% cosmic compatibility ✨ — Celestia`;
-                  if (navigator.share) navigator.share({ title: 'Cosmic Compatibility', text });
-                  else navigator.clipboard?.writeText(text);
-                }}
-                style={{
-                  width: '100%', padding: '12px', borderRadius: 15,
-                  background: 'rgba(10,8,38,0.85)', border: 'none',
-                  color: '#fff', fontSize: 13, fontWeight: 600,
-                  cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                  transition: 'background 0.20s',
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(155,133,224,0.18)'; }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,8,38,0.85)'; }}
-              >
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                </svg>
-                Share Result
-              </button>
-            </div>
+              {/* Point of Attention */}
+              <div style={{ marginBottom: SPACING.xl }}>
+                <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 700, marginBottom: SPACING.sm }}>
+                  Point of Attention
+                </div>
+                <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.78)', margin: 0 }}>
+                  {attentionText[category]}
+                </p>
+              </div>
+
+              {/* Share Result */}
+              <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 14 }}>
+                <button
+                  onClick={() => setShowShare(true)}
+                  style={{
+                    width: '100%', padding: '12px', borderRadius: 13,
+                    background: 'rgba(10,8,38,0.85)', border: 'none',
+                    color: '#fff', fontSize: 13, fontWeight: 600,
+                    cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                    transition: 'background 0.20s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(155,133,224,0.18)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,8,38,0.85)'; }}
+                >
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                  </svg>
+                  Share Result
+                </button>
+              </div>
+            </GlassCard>
           </div>
         </>
+      )}
+
+      {/* ── Custom Share Bottom Sheet ── */}
+      {showShare && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Share your result"
+          onClick={() => setShowShare(false)}
+          style={{
+            position: 'absolute', inset: 0, zIndex: 200,
+            background: 'rgba(5,4,24,0.72)',
+            display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
+            borderRadius: 'inherit',
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: 'rgba(18,14,52,0.96)',
+              backdropFilter: 'blur(32px)',
+              borderRadius: '28px 28px 0 0',
+              border: '1px solid rgba(255,255,255,0.10)',
+              padding: `${SPACING.lg}px ${SPACING.xxl}px ${SPACING.xxl + 16}px`,
+            }}
+          >
+            {/* Handle bar */}
+            <div style={{ width: 40, height: 4, borderRadius: 2, background: 'rgba(255,255,255,0.18)', margin: '0 auto 20px' }} />
+
+            <div style={{ fontSize: 13, fontWeight: 600, color: PALETTE.text, textAlign: 'center', marginBottom: SPACING.xl }}>
+              Share your cosmic result
+            </div>
+
+            {/* Action icons */}
+            <div style={{ display: 'flex', justifyContent: 'space-around', marginBottom: SPACING.xl }}>
+              {[
+                {
+                  label: 'Copy Link',
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                  ),
+                  color: PALETTE.lavender,
+                  action: () => {
+                    const text = `${mySign.name} & ${partner?.name}: ${compat}% cosmic compatibility ✨ — Celestia`;
+                    navigator.clipboard?.writeText(text);
+                    setCopied(true);
+                    setTimeout(() => { setCopied(false); setShowShare(false); }, 1400);
+                  },
+                },
+                {
+                  label: 'Story',
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="5" y="2" width="14" height="20" rx="3"/><path d="M9 7h6M9 12h6M9 17h4"/>
+                    </svg>
+                  ),
+                  color: PALETTE.pink,
+                  action: () => {
+                    const text = `${mySign.name} & ${partner?.name}: ${compat}% cosmic compatibility ✨ — Celestia`;
+                    if (navigator.share) navigator.share({ title: 'Cosmic Compatibility', text });
+                    else { navigator.clipboard?.writeText(text); setShowShare(false); }
+                  },
+                },
+                {
+                  label: 'More',
+                  icon: (
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                      <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                    </svg>
+                  ),
+                  color: PALETTE.ringCareer,
+                  action: () => {
+                    const text = `${mySign.name} & ${partner?.name}: ${compat}% cosmic compatibility ✨ — Celestia`;
+                    if (navigator.share) navigator.share({ title: 'Cosmic Compatibility', text });
+                  },
+                },
+              ].map(({ label, icon, color, action }) => (
+                <button
+                  key={label}
+                  onClick={action}
+                  style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.sm,
+                    fontFamily: 'Outfit, sans-serif',
+                  }}
+                >
+                  <div style={{
+                    width: 58, height: 58, borderRadius: 18,
+                    background: `${color}18`,
+                    border: `1px solid ${color}44`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    color,
+                    transition: 'background 0.18s',
+                  }}>
+                    {label === 'Copy Link' && copied
+                      ? <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={PALETTE.lavender} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      : icon
+                    }
+                  </div>
+                  <span style={{ fontSize: 10, fontWeight: 500, color: 'rgba(240,238,248,0.60)', letterSpacing: 0.3 }}>
+                    {label === 'Copy Link' && copied ? 'Copied!' : label}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setShowShare(false)}
+              style={{
+                width: '100%', padding: '13px', borderRadius: 16,
+                background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)',
+                color: 'rgba(240,238,248,0.65)', fontSize: 13, fontWeight: 500,
+                cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
+              }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
       )}
 
       {/* ── Sign Picker Modal ── */}
