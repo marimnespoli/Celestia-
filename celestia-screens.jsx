@@ -650,23 +650,24 @@ function CompatibilityScreen({ userSign }) {
 
           {/* Crossing ellipses — two tilted orbital rings */}
           <ellipse cx={cx} cy={cy} rx={95} ry={30}
-            fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.9"
+            fill="none" stroke="rgba(255,255,255,0.17)" strokeWidth="0.6"
             transform={`rotate(-28, ${cx}, ${cy})`} />
           <ellipse cx={cx} cy={cy} rx={95} ry={30}
-            fill="none" stroke="rgba(255,255,255,0.22)" strokeWidth="0.9"
+            fill="none" stroke="rgba(255,255,255,0.17)" strokeWidth="0.6"
             transform={`rotate(28, ${cx}, ${cy})`} />
 
           {/* Center anchor dot */}
           <circle cx={cx} cy={cy} r={2.5} fill="rgba(255,255,255,0.50)" />
 
-          {/* 4-pointed sparkles at the ellipse intersection points */}
+          {/* 4-pointed sparkles — 3 structural points on the ellipse geometry */}
           {[
-            { x: cx, y: cy - 34, s: 5.5, op: 0.72 },
-            { x: cx, y: cy + 34, s: 5.5, op: 0.72 },
+            { x: cx,      y: cy - 34, s: 4.5, op: 0.66 },
+            { x: cx,      y: cy + 34, s: 4.5, op: 0.66 },
+            { x: cx + 82, y: cy - 14, s: 3.0, op: 0.48 },
           ].map((sp, i) => {
             const s = sp.s, p = s * 0.14;
             return (
-              <g key={`isp-${i}`} transform={`translate(${sp.x},${sp.y})`}>
+              <g key={`sp-${i}`} transform={`translate(${sp.x},${sp.y})`}>
                 <path
                   d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
                   fill={`rgba(255,255,255,${sp.op})`}
@@ -678,15 +679,6 @@ function CompatibilityScreen({ userSign }) {
           {/* Partner node — anchored on ellipse 2 */}
           {partner ? (
             <g>
-              {[{dx:16,dy:-15,s:3.5,op:0.55},{dx:-18,dy:10,s:2.5,op:0.38}].map((sp, i) => {
-                const x = partnerX + sp.dx, y = partnerY + sp.dy, s = sp.s, p = s * 0.14;
-                return (
-                  <g key={`psp-${i}`} transform={`translate(${x},${y})`}>
-                    <path d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
-                      fill={`rgba(255,255,255,${sp.op})`} />
-                  </g>
-                );
-              })}
               <circle cx={partnerX} cy={partnerY} r={22}
                 fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.36)" strokeWidth="1.2" />
               <foreignObject x={partnerX - 13} y={partnerY - 13} width="26" height="26">
@@ -717,15 +709,6 @@ function CompatibilityScreen({ userSign }) {
 
           {/* My sign node — anchored on ellipse 1 */}
           <g>
-            {[{dx:-17,dy:-15,s:4,op:0.62},{dx:18,dy:12,s:2.5,op:0.42}].map((sp, i) => {
-              const x = myX + sp.dx, y = myY + sp.dy, s = sp.s, p = s * 0.14;
-              return (
-                <g key={`msp-${i}`} transform={`translate(${x},${y})`}>
-                  <path d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
-                    fill={`rgba(255,255,255,${sp.op})`} />
-                </g>
-              );
-            })}
             <circle cx={myX} cy={myY} r={22}
               fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.44)" strokeWidth="1.4" />
             <foreignObject x={myX - 13} y={myY - 13} width="26" height="26">
@@ -750,7 +733,7 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Add / Change Partner CTA ── */}
-      <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.lg}px`, display: 'flex', justifyContent: 'center' }}>
+      <div style={{ padding: `${SPACING.xs}px 28px ${SPACING.sm}px`, display: 'flex', justifyContent: 'center' }}>
         <button
           onClick={() => setShowPicker(true)}
           aria-label={partner ? `Change partner, currently ${partner.name}` : 'Add a partner sign'}
@@ -793,8 +776,8 @@ function CompatibilityScreen({ userSign }) {
       )}
 
       {/* ── Narrative copy ── */}
-      <div style={{ padding: `0 ${SPACING.xxl}px ${SPACING.xxl}px`, flex: 1 }}>
-        <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.lg, letterSpacing: -0.4, lineHeight: 1.3 }}>
+      <div style={{ padding: `0 28px ${SPACING.xxl}px`, flex: 1 }}>
+        <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.4, lineHeight: 1.3 }}>
           {partner ? `${mySign.name} & ${partner.name}` : 'Discover cosmic connections'}
         </div>
         <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
