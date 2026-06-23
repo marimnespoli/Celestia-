@@ -809,7 +809,7 @@ function CompatibilityScreen({ userSign }) {
         }}>
 
           {/* ── Single mass block — title / description / button at unified width ── */}
-          <div style={{ width: '90%', maxWidth: 310 }}>
+          <div style={{ width: '92%', maxWidth: 336 }}>
 
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: 16, letterSpacing: -0.5 }}>
               Discover your cosmic connection
