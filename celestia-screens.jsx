@@ -739,27 +739,28 @@ function CompatibilityScreen({ userSign }) {
             </p>
           </div>
 
-          {/* Primary CTA */}
-          <button
-            onClick={() => setShowPicker(true)}
-            aria-label="Connect with someone"
-            style={{
-              padding: '14px', borderRadius: 20,
-              background: 'linear-gradient(135deg,#9B85E0,#F0A8C4)',
-              border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
-              cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
-              boxShadow: '0 8px 32px rgba(155,133,224,0.40)',
-              transition: 'transform 0.15s, box-shadow 0.2s',
-              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-            }}
-            onMouseEnter={e => { e.currentTarget.style.transform = 'scale(1.02)'; e.currentTarget.style.boxShadow = '0 12px 40px rgba(155,133,224,0.60)'; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = 'scale(1)'; e.currentTarget.style.boxShadow = '0 8px 32px rgba(155,133,224,0.40)'; }}
-          >
-            <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-              <path d="M7 2v10M2 7h10" />
-            </svg>
-            Connect with someone
-          </button>
+          {/* Primary CTA — ghost with gradient border */}
+          <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.55),rgba(155,133,224,0.55))', padding: '1px', borderRadius: 20 }}>
+            <button
+              onClick={() => setShowPicker(true)}
+              aria-label="Connect with someone"
+              style={{
+                width: '100%', padding: '14px', borderRadius: 19,
+                background: 'rgba(10,8,38,0.80)',
+                border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
+                cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
+                transition: 'background 0.20s, transform 0.15s',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background='rgba(155,133,224,0.18)'; e.currentTarget.style.transform='scale(1.01)'; }}
+              onMouseLeave={e => { e.currentTarget.style.background='rgba(10,8,38,0.80)'; e.currentTarget.style.transform='scale(1)'; }}
+            >
+              <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                <path d="M7 2v10M2 7h10" />
+              </svg>
+              Connect with someone
+            </button>
+          </div>
 
           {/* Category chips */}
           <div style={{ marginTop: SPACING['3xl'] }}>
