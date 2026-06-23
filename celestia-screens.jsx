@@ -803,11 +803,15 @@ function CompatibilityScreen({ userSign }) {
       {!partner ? (
         <div style={{ padding: `16px ${SPACING.xxl}px 96px`, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', textAlign: 'center' }}>
 
-          <div style={{ marginBottom: SPACING.xxl }}>
+          {/* Context block — title + description grouped tightly */}
+          <div style={{ marginBottom: SPACING['3xl'] + 8 }}>
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
               Discover your cosmic connection
             </div>
-            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(200,210,240,0.80)', margin: 0, fontWeight: 300 }}>
+            <p style={{
+              fontSize: 12, lineHeight: 2.1, color: 'rgba(200,210,240,0.80)', margin: '0 auto',
+              fontWeight: 300, maxWidth: 220,
+            }}>
               Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
             </p>
           </div>
