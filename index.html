@@ -123,7 +123,7 @@ function App() {
   const renderScreen = () => {
     if (tab === 'horoscope')     return <DashboardScreen userSign={userSign} />;
     if (tab === 'compatibility') return <CompatibilityScreen userSign={userSign || 'Aries'} />;
-    if (tab === 'settings')      return <SettingsScreen userSign={userSign} birthDate={birthDate} birthTime={birthTime} onSave={handleSave} />;
+    if (tab === 'settings')      return <SettingsScreen userSign={userSign} birthDate={birthDate} birthTime={birthTime} onSave={handleSave} onNavigate={goTab} />;
   };
 
   return (
