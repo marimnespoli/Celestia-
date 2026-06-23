@@ -44,7 +44,7 @@ function StarField() {
 
 // ── Circular Progress Ring ─────────────────────────────────────
 // aria-label exposes the metric value to screen readers
-function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
+function CircularProgress({ value, label, color = '#9B85E0', size = 72, gradientColors }) {
   const radius = (size - 10) / 2;
   const circ = 2 * Math.PI * radius;
   const [animated, setAnimated] = React.useState(0);
@@ -55,6 +55,7 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
   }, [value]);
 
   const animOffset = circ - (animated / 100) * circ;
+  const gradId = gradientColors ? `cp-grad-${label.replace(/\s+/g, '-')}` : null;
 
   return (
     <div
@@ -64,11 +65,19 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
     >
       <div style={{ position: 'relative', width: size, height: size }}>
         <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }} aria-hidden="true">
+          {gradientColors && (
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stopColor={gradientColors[0]} />
+                <stop offset="100%" stopColor={gradientColors[1]} />
+              </linearGradient>
+            </defs>
+          )}
           {/* track-empty: low contrast intentional — decorative track only */}
           <circle cx={size/2} cy={size/2} r={radius}
             fill="none" stroke={PALETTE.trackEmpty} strokeWidth={4} />
           <circle cx={size/2} cy={size/2} r={radius}
-            fill="none" stroke={color} strokeWidth={4}
+            fill="none" stroke={gradId ? `url(#${gradId})` : color} strokeWidth={4}
             strokeLinecap="round"
             strokeDasharray={circ}
             strokeDashoffset={animOffset}
@@ -78,7 +87,7 @@ function CircularProgress({ value, label, color = '#9B85E0', size = 72 }) {
           position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center', gap: 1,
         }}>
-          <span style={{ color: PALETTE.text, fontSize: 13, fontWeight: 700, lineHeight: 1 }}>{value}</span>
+          <span style={{ color: '#fff', fontSize: 13, fontWeight: 700, lineHeight: 1 }}>{value}</span>
           <span style={{ color: PALETTE.muted, fontSize: 8, fontWeight: 500, lineHeight: 1 }}>/100</span>
         </div>
       </div>

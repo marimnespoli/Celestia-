@@ -602,6 +602,7 @@ function CompatibilityScreen({ userSign }) {
   const [showPicker, setShowPicker]   = React.useState(false);
   const [angle, setAngle]             = React.useState(225);
   const [selecting, setSelecting]     = React.useState(null);
+  const [category, setCategory]       = React.useState('Love');
 
   React.useEffect(() => {
     if (!document.getElementById('cosmic-pulse-kf')) {
@@ -626,6 +627,8 @@ function CompatibilityScreen({ userSign }) {
   const i2 = partner ? ZODIAC_SIGNS.findIndex(z => z.name === partner.name) : 0;
   const loveScore   = compat ? Math.min(99, Math.max(35, compat + ((i1 * 5 + i2 * 3) % 21) - 10)) : null;
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
+  const workScore   = compat ? Math.min(99, Math.max(30, compat + ((i1 * 7 + i2 * 2) % 23) - 11)) : null;
+  const crushScore  = compat ? Math.min(99, Math.max(40, compat + ((i1 * 4 + i2 * 9) % 19) - 9))  : null;
 
   const toRad = d => d * Math.PI / 180;
   const ORB_R = 70;
@@ -639,6 +642,61 @@ function CompatibilityScreen({ userSign }) {
   const handleSelectSign = (name) => {
     setSelecting(name);
     setTimeout(() => { setPartnerSign(name); setSelecting(null); setShowPicker(false); }, 600);
+  };
+
+  // Per-category ring config
+  const catConfig = {
+    Love:       { ring1: { v: loveScore,   l: 'Love',       c: PALETTE.ringLove,   g: ['#FFB8D6','#E0447C'] }, ring2: { v: crushScore,  l: 'Attraction', c: PALETTE.pink,        g: ['#FFD0E8','#FF6B9D'] } },
+    Friendship: { ring1: { v: friendScore, l: 'Friendship', c: PALETTE.lavender,   g: ['#C4B0FF','#6D4FBF'] }, ring2: { v: loveScore,   l: 'Warmth',     c: PALETTE.ringLove,    g: ['#FFB8D6','#E0447C'] } },
+    Work:       { ring1: { v: workScore,   l: 'Work',       c: PALETTE.ringCareer, g: ['#FFD580','#C08800'] }, ring2: { v: friendScore, l: 'Trust',      c: PALETTE.lavender,    g: ['#C4B0FF','#6D4FBF'] } },
+    Crush:      { ring1: { v: crushScore,  l: 'Attraction', c: PALETTE.pink,       g: ['#FFD0E8','#FF6B9D'] }, ring2: { v: loveScore,   l: 'Love',       c: PALETTE.ringLove,    g: ['#FFB8D6','#E0447C'] } },
+  };
+  const cfg = catConfig[category];
+
+  const harmonyText = {
+    Love: compat >= 80
+      ? `${mySign.name} and ${partner?.name} radiate a natural, uplifting bond. Your energies align to amplify each other's strengths and create a rare sense of ease.`
+      : compat >= 65
+      ? `${mySign.name} and ${partner?.name} find beauty in contrast — your different energies complement each other in ways that deepen with time.`
+      : `${mySign.name} and ${partner?.name} discover meaning through difference. The tension between you can spark genuine transformation when channelled with care.`,
+    Friendship: compat >= 80
+      ? `${mySign.name} and ${partner?.name} are natural allies. Your connection feels effortless and mutually supportive — a friendship built to last.`
+      : compat >= 65
+      ? `${mySign.name} and ${partner?.name} bring out unique qualities in each other. Your bond rewards you both with genuine understanding over time.`
+      : `${mySign.name} and ${partner?.name} may clash at first, but shared experiences reveal unexpected common ground.`,
+    Work: compat >= 80
+      ? `${mySign.name} and ${partner?.name} are a powerhouse team. Complementary skills and shared drive create remarkable results when focused on a common goal.`
+      : compat >= 65
+      ? `${mySign.name} and ${partner?.name} bring different strengths to the table. The contrast in your styles fuels creative and well-rounded outcomes.`
+      : `${mySign.name} and ${partner?.name} have starkly different working rhythms. With clear roles and boundaries, these differences become your greatest asset.`,
+    Crush: compat >= 80
+      ? `The pull between ${mySign.name} and ${partner?.name} is magnetic and undeniable. Your chemistry is electric — a connection written in the stars.`
+      : compat >= 65
+      ? `${mySign.name} and ${partner?.name} share a smouldering tension. The attraction is real and the intrigue runs deep.`
+      : `${mySign.name} and ${partner?.name} orbit each other with restless energy. The contrast between you creates a fascination that's hard to ignore.`,
+  };
+
+  const attentionText = {
+    Love: compat >= 80
+      ? `Even the deepest bonds need nurturing. Watch for moments when shared intensity becomes pressure — honouring individual space keeps the connection vibrant.`
+      : compat >= 65
+      ? `Differing rhythms between ${mySign.planet} and ${partner?.planet} can create friction. Patience and clear expression are your most powerful tools.`
+      : `The push-pull between your signs demands deliberate effort. Power dynamics require mutual respect and a willingness to adapt.`,
+    Friendship: compat >= 80
+      ? `Strong friendships can slip into codependency. Make space for individual growth to keep the dynamic healthy and fresh.`
+      : compat >= 65
+      ? `Mismatched energy levels can lead to one-sided effort. Regular honest check-ins ensure the friendship feels balanced for both of you.`
+      : `Different communication styles may cause misunderstandings. Lead with curiosity, not assumptions, to bridge the gap.`,
+    Work: compat >= 80
+      ? `High-performing partnerships can breed friction over recognition. Defining clear lanes of ownership early prevents tension from building.`
+      : compat >= 65
+      ? `Contrasting approaches may cause decision-making friction. Agree on a shared process before diving into tasks to maintain momentum.`
+      : `Clashing work styles require explicit agreements. Set shared expectations around communication and deadlines to avoid frustration.`,
+    Crush: compat >= 80
+      ? `Intense chemistry can move fast. Let things unfold naturally rather than rushing — the real depth of this connection reveals itself with time.`
+      : compat >= 65
+      ? `The attraction is real, but don't mistake excitement for compatibility. Take time to understand each other's deeper values before diving in.`
+      : `The pull you feel may be more about contrast than lasting harmony. Stay grounded in what you truly need as you explore this connection.`,
   };
 
   return (
@@ -662,6 +720,21 @@ function CompatibilityScreen({ userSign }) {
       {/* ── Orbital canvas ── */}
       <div style={{ position: 'relative', height: 220, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 220" width="100%" height="220" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
+          <defs>
+            <filter id="intersection-glow-blur">
+              <feGaussianBlur stdDeviation="16" />
+            </filter>
+          </defs>
+
+          {/* Intersection glow — opacity and color scale with compatibility % */}
+          {partner && compat && (
+            <circle
+              cx={(c1x + c2x) / 2} cy={(c1y + c2y) / 2} r={50}
+              fill={compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080'}
+              filter="url(#intersection-glow-blur)"
+              opacity={compat / 100 * 0.68}
+            />
+          )}
 
           {/* Two crossing orbits */}
           <circle cx={c1x} cy={c1y} r={ORB_R} fill="none"
@@ -735,7 +808,7 @@ function CompatibilityScreen({ userSign }) {
               Discover your cosmic connection
             </div>
             <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(240,238,248,0.55)', margin: 0, fontWeight: 300 }}>
-              Add someone to see how your birth charts align and explore the cosmic bond between you.
+              Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
             </p>
           </div>
 
@@ -761,34 +834,6 @@ function CompatibilityScreen({ userSign }) {
               Connect with someone
             </button>
           </div>
-
-          {/* Category chips */}
-          <div style={{ marginTop: SPACING['3xl'] }}>
-            <div style={{ fontSize: 10, color: PALETTE.muted, letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: SPACING.sm }}>
-              Explore compatibility in
-            </div>
-            <div style={{ display: 'flex', gap: SPACING.md, flexWrap: 'wrap' }}>
-              {['Love', 'Friendship', 'Work', 'Crush'].map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => setShowPicker(true)}
-                  style={{
-                    padding: `${SPACING.xs + 2}px ${SPACING.md + 2}px`,
-                    borderRadius: 20, fontSize: 12, fontWeight: 500,
-                    background: 'rgba(255,255,255,0.07)',
-                    border: '1px solid rgba(255,255,255,0.14)',
-                    color: 'rgba(240,238,248,0.70)',
-                    cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                    transition: 'background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background='rgba(212,175,55,0.12)'; e.currentTarget.style.borderColor='rgba(212,175,55,0.50)'; e.currentTarget.style.color='#fff'; e.currentTarget.style.boxShadow='0 0 10px 2px rgba(212,175,55,0.28)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.14)'; e.currentTarget.style.color='rgba(240,238,248,0.70)'; e.currentTarget.style.boxShadow='none'; }}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
         </div>
 
       ) : (
@@ -813,28 +858,102 @@ function CompatibilityScreen({ userSign }) {
             </button>
           </div>
 
-          {/* ── Score rings ── */}
+          {/* ── Overall match + Category chips ── */}
           {compat && (
-            <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px` }}>
+            <div style={{ padding: `${SPACING.xs}px ${SPACING.xxl}px ${SPACING.sm}px` }}>
               <div style={{ textAlign: 'center', fontSize: 21, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md }}>
                 {compat}%{' '}
                 <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>overall match</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
-                <CircularProgress key="compat-love"   value={loveScore}   label="Love"       color={PALETTE.ringLove} size={80} />
-                <CircularProgress key="compat-friend" value={friendScore} label="Friendship" color={PALETTE.lavender} size={80} />
+
+              {/* Category chips */}
+              <div style={{ display: 'flex', gap: SPACING.sm, justifyContent: 'center', marginBottom: SPACING.md }}>
+                {['Love', 'Friendship', 'Work', 'Crush'].map(cat => {
+                  const active = cat === category;
+                  const chipColors = { Love: PALETTE.ringLove, Friendship: PALETTE.lavender, Work: PALETTE.ringCareer, Crush: PALETTE.pink };
+                  return (
+                    <button
+                      key={cat}
+                      onClick={() => setCategory(cat)}
+                      style={{
+                        padding: `${SPACING.xs + 1}px ${SPACING.md}px`,
+                        borderRadius: 20, fontSize: 11, fontWeight: active ? 700 : 500,
+                        background: active ? `${chipColors[cat]}22` : 'rgba(255,255,255,0.06)',
+                        border: `1px solid ${active ? chipColors[cat] : 'rgba(255,255,255,0.12)'}`,
+                        color: active ? '#fff' : 'rgba(240,238,248,0.60)',
+                        cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
+                        boxShadow: active ? `0 0 10px 1px ${chipColors[cat]}44` : 'none',
+                        transition: 'all 0.18s',
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Score rings — update based on selected category */}
+              {cfg && (
+                <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
+                  <CircularProgress key={`${category}-r1`} value={cfg.ring1.v} label={cfg.ring1.l} color={cfg.ring1.c} size={80} gradientColors={cfg.ring1.g} />
+                  <CircularProgress key={`${category}-r2`} value={cfg.ring2.v} label={cfg.ring2.l} color={cfg.ring2.c} size={80} gradientColors={cfg.ring2.g} />
+                </div>
+              )}
             </div>
           )}
 
           {/* ── Narrative ── */}
           <div style={{ padding: `0 28px ${SPACING.xxl}px`, flex: 1 }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.4, lineHeight: 1.3 }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md, letterSpacing: -0.4, lineHeight: 1.3 }}>
               {mySign.name} & {partner.name}
             </div>
-            <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
-              {`${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary and rich' : 'challenging yet transformative'} connection. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension that drives growth'}.`}
-            </p>
+
+            {/* Harmony */}
+            <div style={{ marginBottom: SPACING.md }}>
+              <div style={{ fontSize: 9, letterSpacing: 1.6, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 600, marginBottom: SPACING.xs }}>
+                Harmony
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.75)', margin: 0 }}>
+                {harmonyText[category]}
+              </p>
+            </div>
+
+            {/* Point of Attention */}
+            <div style={{ marginBottom: SPACING.lg }}>
+              <div style={{ fontSize: 9, letterSpacing: 1.6, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 600, marginBottom: SPACING.xs }}>
+                Point of Attention
+              </div>
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.55)', margin: 0 }}>
+                {attentionText[category]}
+              </p>
+            </div>
+
+            {/* Share Result */}
+            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 16 }}>
+              <button
+                onClick={() => {
+                  const text = `${mySign.name} & ${partner.name}: ${compat}% cosmic compatibility ✨ — Celestia`;
+                  if (navigator.share) navigator.share({ title: 'Cosmic Compatibility', text });
+                  else navigator.clipboard?.writeText(text);
+                }}
+                style={{
+                  width: '100%', padding: '12px', borderRadius: 15,
+                  background: 'rgba(10,8,38,0.85)', border: 'none',
+                  color: '#fff', fontSize: 13, fontWeight: 600,
+                  cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
+                  transition: 'background 0.20s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(155,133,224,0.18)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,8,38,0.85)'; }}
+              >
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+                </svg>
+                Share Result
+              </button>
+            </div>
           </div>
         </>
       )}
@@ -857,7 +976,7 @@ function CompatibilityScreen({ userSign }) {
             <span style={{ fontSize: 18, fontWeight: 600, color: PALETTE.text }}>Choose a sign</span>
             <button
               onClick={() => setShowPicker(false)}
-              aria-label="Fechar"
+              aria-label="Close"
               style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 20, color: PALETTE.muted }}
             >✕</button>
           </div>
