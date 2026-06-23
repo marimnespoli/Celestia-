@@ -801,51 +801,58 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Empty state ── */}
       {!partner ? (
-        <div style={{ padding: `16px ${SPACING.xxl}px 96px`, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center', textAlign: 'center' }}>
+        /* Outer shell: flex column, vertically centred, bottom padding clears nav */
+        <div style={{
+          flex: 1, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          paddingBottom: 88, textAlign: 'center',
+        }}>
 
-          {/* Context block — title + description grouped tightly */}
-          <div style={{ marginBottom: SPACING['3xl'] + 8 }}>
-            <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
+          {/* ── Single mass block — title / description / button at unified width ── */}
+          <div style={{ width: '84%', maxWidth: 272 }}>
+
+            <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: 16, letterSpacing: -0.5 }}>
               Discover your cosmic connection
             </div>
+
             <p style={{
-              fontSize: 12, lineHeight: 2.1, color: 'rgba(200,210,240,0.80)', margin: '0 auto',
-              fontWeight: 300, maxWidth: 220,
+              fontSize: 12, lineHeight: 2.0, color: 'rgba(200,210,240,0.80)',
+              margin: '0 0 32px', fontWeight: 300,
             }}>
               Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
             </p>
-          </div>
 
-          {/* Primary CTA — ghost with gradient border */}
-          <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.72),rgba(155,133,224,0.72))', padding: '1px', borderRadius: 20 }}>
-            <button
-              onClick={() => setShowPicker(true)}
-              aria-label="Connect with someone"
-              style={{
-                width: '100%', padding: '14px', borderRadius: 19,
-                background: 'rgba(10,8,38,0.80)',
-                border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
-                cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
-                transition: 'background 0.20s, transform 0.15s',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background='rgba(155,133,224,0.18)'; e.currentTarget.style.transform='scale(1.01)'; }}
-              onMouseLeave={e => { e.currentTarget.style.background='rgba(10,8,38,0.80)'; e.currentTarget.style.transform='scale(1)'; }}
-            >
-              <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-                <path d="M7 2v10M2 7h10" />
-              </svg>
-              Connect with someone
-            </button>
-          </div>
+            {/* Primary CTA — ghost with gradient border */}
+            <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.72),rgba(155,133,224,0.72))', padding: '1px', borderRadius: 20 }}>
+              <button
+                onClick={() => setShowPicker(true)}
+                aria-label="Connect with someone"
+                style={{
+                  width: '100%', padding: '14px', borderRadius: 19,
+                  background: 'rgba(10,8,38,0.80)',
+                  border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
+                  cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
+                  transition: 'background 0.20s, transform 0.15s',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background='rgba(155,133,224,0.18)'; e.currentTarget.style.transform='scale(1.01)'; }}
+                onMouseLeave={e => { e.currentTarget.style.background='rgba(10,8,38,0.80)'; e.currentTarget.style.transform='scale(1)'; }}
+              >
+                <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
+                  <path d="M7 2v10M2 7h10" />
+                </svg>
+                Connect with someone
+              </button>
+            </div>
 
-          <p style={{
-            textAlign: 'center', margin: `${SPACING['3xl']}px 0 0`,
-            fontSize: 11, letterSpacing: 0.5, fontStyle: 'italic', fontWeight: 400,
-            color: 'rgba(200,210,240,0.85)',
-          }}>
-            Your cosmic connection is one click away.
-          </p>
+            <p style={{
+              margin: `${SPACING['3xl']}px 0 0`,
+              fontSize: 11, letterSpacing: 0.5, fontStyle: 'italic', fontWeight: 400,
+              color: 'rgba(200,210,240,0.85)',
+            }}>
+              Your cosmic connection is one click away.
+            </p>
+          </div>
         </div>
 
       ) : (
