@@ -718,7 +718,7 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Orbital canvas ── */}
-      <div style={{ position: 'relative', height: 248, flexShrink: 0, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', height: 248, flexShrink: 0, overflow: 'hidden', marginTop: 20 }}>
         <svg viewBox="0 0 320 248" width="100%" height="248" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
             <filter id="intersection-glow-blur">
@@ -801,7 +801,7 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Empty state ── */}
       {!partner ? (
-        <div style={{ padding: `64px ${SPACING.xxl}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div style={{ padding: `16px ${SPACING.xxl}px 96px`, display: 'flex', flexDirection: 'column', flex: 1, justifyContent: 'center' }}>
 
           <div style={{ marginBottom: SPACING.xxl }}>
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
