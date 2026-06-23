@@ -701,10 +701,10 @@ function CompatibilityScreen({ userSign }) {
             </g>
           )}
 
-          {/* My sign node */}
+          {/* My sign node — golden accent so user knows it's them */}
           <g>
-            <circle cx={myX} cy={myY} r={34}
-              fill="none" stroke="rgba(255,255,255,0.72)" strokeWidth="1.0" strokeDasharray="3 2" />
+            <circle cx={myX} cy={myY} r={36}
+              fill="rgba(212,175,55,0.13)" stroke="rgba(212,175,55,0.70)" strokeWidth="1.2" strokeDasharray="3 2" />
             <foreignObject x={myX - 20} y={myY - 20} width="40" height="40">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.96)' }}>
                 <SignGlyph name={mySign.name} size={20} />
@@ -731,10 +731,10 @@ function CompatibilityScreen({ userSign }) {
         <div style={{ padding: `${SPACING.lg}px ${SPACING.xxl}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', flex: 1 }}>
 
           <div style={{ marginBottom: SPACING.xxl }}>
-            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.3 }}>
+            <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.5 }}>
               Discover your cosmic connection
             </div>
-            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(240,238,248,0.40)', margin: 0, fontWeight: 300 }}>
+            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(240,238,248,0.55)', margin: 0, fontWeight: 300 }}>
               Add someone to see how your birth charts align and explore the cosmic bond between you.
             </p>
           </div>
@@ -767,22 +767,22 @@ function CompatibilityScreen({ userSign }) {
             <div style={{ fontSize: 10, color: PALETTE.muted, letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: SPACING.sm }}>
               Explore compatibility in
             </div>
-            <div style={{ display: 'flex', gap: SPACING.sm - 2, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: SPACING.md, flexWrap: 'wrap' }}>
               {['Love', 'Friendship', 'Work', 'Crush'].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setShowPicker(true)}
                   style={{
-                    padding: `${SPACING.xs + 1}px ${SPACING.md}px`,
+                    padding: `${SPACING.xs + 2}px ${SPACING.md + 2}px`,
                     borderRadius: 20, fontSize: 12, fontWeight: 500,
                     background: 'rgba(255,255,255,0.07)',
                     border: '1px solid rgba(255,255,255,0.14)',
                     color: 'rgba(240,238,248,0.70)',
                     cursor: 'pointer', fontFamily: 'Outfit, sans-serif',
-                    transition: 'background 0.18s, border-color 0.18s, color 0.18s',
+                    transition: 'background 0.18s, border-color 0.18s, color 0.18s, box-shadow 0.18s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background='rgba(155,133,224,0.18)'; e.currentTarget.style.borderColor='rgba(155,133,224,0.40)'; e.currentTarget.style.color='#fff'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.14)'; e.currentTarget.style.color='rgba(240,238,248,0.70)'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background='rgba(212,175,55,0.12)'; e.currentTarget.style.borderColor='rgba(212,175,55,0.50)'; e.currentTarget.style.color='#fff'; e.currentTarget.style.boxShadow='0 0 10px 2px rgba(212,175,55,0.28)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.07)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.14)'; e.currentTarget.style.color='rgba(240,238,248,0.70)'; e.currentTarget.style.boxShadow='none'; }}
                 >
                   {cat}
                 </button>
