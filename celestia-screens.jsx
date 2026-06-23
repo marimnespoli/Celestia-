@@ -628,9 +628,9 @@ function CompatibilityScreen({ userSign }) {
   const friendScore = compat ? Math.min(99, Math.max(35, compat + ((i1 * 3 + i2 * 7) % 21) - 10)) : null;
 
   const toRad = d => d * Math.PI / 180;
-  const ORB_R = 78;
-  const c1x = 132, c1y = 118;
-  const c2x = 188, c2y = 142;
+  const ORB_R = 70;
+  const c1x = 132, c1y = 105;
+  const c2x = 188, c2y = 125;
   const myX = c1x + ORB_R * Math.cos(toRad(angle));
   const myY = c1y + ORB_R * Math.sin(toRad(angle));
   const partnerX = c2x + ORB_R * Math.cos(toRad(angle + 180));
@@ -660,8 +660,8 @@ function CompatibilityScreen({ userSign }) {
       </div>
 
       {/* ── Orbital canvas ── */}
-      <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
-        <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
+      <div style={{ position: 'relative', height: 220, flexShrink: 0, overflow: 'hidden' }}>
+        <svg viewBox="0 0 320 220" width="100%" height="220" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
           {/* Two crossing orbits */}
           <circle cx={c1x} cy={c1y} r={ORB_R} fill="none"
@@ -728,13 +728,13 @@ function CompatibilityScreen({ userSign }) {
 
       {/* ── Empty state ── */}
       {!partner ? (
-        <div style={{ padding: `${SPACING.md}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', gap: SPACING.lg, flex: 1 }}>
+        <div style={{ padding: `${SPACING.lg}px ${SPACING.xxl}px ${SPACING.xxl}px`, display: 'flex', flexDirection: 'column', flex: 1 }}>
 
-          <div>
-            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.xs, letterSpacing: -0.3 }}>
+          <div style={{ marginBottom: SPACING.xxl }}>
+            <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.sm, letterSpacing: -0.3 }}>
               Discover your cosmic connection
             </div>
-            <p style={{ fontSize: 13, lineHeight: 1.75, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
+            <p style={{ fontSize: 12, lineHeight: 1.8, color: 'rgba(240,238,248,0.40)', margin: 0, fontWeight: 300 }}>
               Add someone to see how your birth charts align and explore the cosmic bond between you.
             </p>
           </div>
@@ -762,7 +762,7 @@ function CompatibilityScreen({ userSign }) {
           </button>
 
           {/* Category chips */}
-          <div>
+          <div style={{ marginTop: SPACING['3xl'] }}>
             <div style={{ fontSize: 10, color: PALETTE.muted, letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: SPACING.sm }}>
               Explore compatibility in
             </div>
