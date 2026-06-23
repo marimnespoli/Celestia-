@@ -602,13 +602,11 @@ function CompatibilityScreen({ userSign }) {
 
   const cx = 160, cy = 128;
   const toRad = d => d * Math.PI / 180;
-  const ERX = 95, ERY = 30;
-  const E1R = toRad(-28);
-  const E2R = toRad(28);
-  const myX = cx + ERX * Math.cos(toRad(angle)) * Math.cos(E1R) - ERY * Math.sin(toRad(angle)) * Math.sin(E1R);
-  const myY = cy + ERX * Math.cos(toRad(angle)) * Math.sin(E1R) + ERY * Math.sin(toRad(angle)) * Math.cos(E1R);
-  const partnerX = cx + ERX * Math.cos(toRad(angle + 180)) * Math.cos(E2R) - ERY * Math.sin(toRad(angle + 180)) * Math.sin(E2R);
-  const partnerY = cy + ERX * Math.cos(toRad(angle + 180)) * Math.sin(E2R) + ERY * Math.sin(toRad(angle + 180)) * Math.cos(E2R);
+  const ORB_R = 96;
+  const myX = cx + ORB_R * Math.cos(toRad(angle));
+  const myY = cy + ORB_R * Math.sin(toRad(angle));
+  const partnerX = cx + ORB_R * Math.cos(toRad(angle + 180));
+  const partnerY = cy + ORB_R * Math.sin(toRad(angle + 180));
 
   const handleSelectSign = (name) => {
     setSelecting(name);
@@ -634,65 +632,53 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 258, flexShrink: 0, overflow: 'hidden' }}>
         <svg viewBox="0 0 320 258" width="100%" height="258" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
 
-          {/* Background stars */}
+          {/* Outer orbit — single circular path both signs travel */}
+          <circle cx={cx} cy={cy} r={96}
+            fill="none" stroke="rgba(255,255,255,0.20)" strokeWidth="0.7" />
+
+          {/* Concentric center rings */}
+          <circle cx={cx} cy={cy} r={52} fill="none" stroke="rgba(255,255,255,0.13)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={38} fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={26} fill="none" stroke="rgba(255,255,255,0.24)" strokeWidth="0.6" />
+          <circle cx={cx} cy={cy} r={15} fill="none" stroke="rgba(255,255,255,0.32)" strokeWidth="0.7" />
+          <circle cx={cx} cy={cy} r={3.5} fill="rgba(255,255,255,0.78)" />
+
+          {/* Inner tilted ellipse — passes through the concentric ring area */}
+          <ellipse cx={cx} cy={cy} rx={64} ry={22}
+            fill="none" stroke="rgba(255,255,255,0.16)" strokeWidth="0.6"
+            transform={`rotate(20, ${cx}, ${cy})`} />
+
+          {/* Static dot markers at key geometric positions */}
           {[
-            {x:28,y:36,r:1.2},{x:292,y:28,r:1.8},
-            {x:18,y:198,r:0.9},{x:304,y:215,r:1.2},
-            {x:162,y:14,r:0.8},{x:76,y:252,r:1.5},
-            {x:242,y:248,r:0.8},{x:55,y:140,r:1},
-            {x:268,y:100,r:0.8},{x:95,y:18,r:1},
-            {x:38,y:80,r:0.7},{x:285,y:160,r:0.7},
-          ].map((p, i) => (
-            <circle key={i} cx={p.x} cy={p.y} r={p.r}
-              fill="#fff"
-              opacity={0.20 + 0.16 * Math.sin(toRad(angle * 0.6 + i * 42))} />
+            { r: 96,  deg: 12,  size: 2.8, op: 0.86 },
+            { r: 96,  deg: 188, size: 1.8, op: 0.58 },
+            { r: 96,  deg: 108, size: 1.6, op: 0.48 },
+            { r: 52,  deg: -22, size: 1.6, op: 0.52 },
+            { r: 38,  deg: 214, size: 1.5, op: 0.46 },
+          ].map((d, i) => (
+            <circle key={`dot-${i}`}
+              cx={cx + d.r * Math.cos(toRad(d.deg))}
+              cy={cy + d.r * Math.sin(toRad(d.deg))}
+              r={d.size} fill={`rgba(255,255,255,${d.op})`} />
           ))}
 
-          {/* Crossing ellipses — two tilted orbital rings */}
-          <ellipse cx={cx} cy={cy} rx={95} ry={30}
-            fill="none" stroke="rgba(255,255,255,0.17)" strokeWidth="0.6"
-            transform={`rotate(-28, ${cx}, ${cy})`} />
-          <ellipse cx={cx} cy={cy} rx={95} ry={30}
-            fill="none" stroke="rgba(255,255,255,0.17)" strokeWidth="0.6"
-            transform={`rotate(28, ${cx}, ${cy})`} />
-
-          {/* Center anchor dot */}
-          <circle cx={cx} cy={cy} r={2.5} fill="rgba(255,255,255,0.50)" />
-
-          {/* 4-pointed sparkles — 3 structural points on the ellipse geometry */}
-          {[
-            { x: cx,      y: cy - 34, s: 4.5, op: 0.66 },
-            { x: cx,      y: cy + 34, s: 4.5, op: 0.66 },
-            { x: cx + 82, y: cy - 14, s: 3.0, op: 0.48 },
-          ].map((sp, i) => {
-            const s = sp.s, p = s * 0.14;
-            return (
-              <g key={`sp-${i}`} transform={`translate(${sp.x},${sp.y})`}>
-                <path
-                  d={`M 0 ${-s} L ${p} ${-p} L ${s} 0 L ${p} ${p} L 0 ${s} L ${-p} ${p} L ${-s} 0 L ${-p} ${-p} Z`}
-                  fill={`rgba(255,255,255,${sp.op})`}
-                />
-              </g>
-            );
-          })}
-
-          {/* Partner node — anchored on ellipse 2 */}
+          {/* Partner node — orbiting on outer ring */}
           {partner ? (
             <g>
-              <circle cx={partnerX} cy={partnerY} r={22}
-                fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.36)" strokeWidth="1.2" />
-              <foreignObject x={partnerX - 13} y={partnerY - 13} width="26" height="26">
-                <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.92)' }}>
-                  <SignGlyph name={partner.name} size={17} />
+              <circle cx={partnerX} cy={partnerY} r={17}
+                fill="none" stroke="rgba(255,255,255,0.46)" strokeWidth="0.8" />
+              <foreignObject x={partnerX - 11} y={partnerY - 11} width="22" height="22">
+                <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.90)' }}>
+                  <SignGlyph name={partner.name} size={13} />
                 </div>
               </foreignObject>
               {(() => {
                 const ang = Math.atan2(partnerY - cy, partnerX - cx);
-                const lx = partnerX + 36 * Math.cos(ang);
-                const ly = partnerY + 36 * Math.sin(ang);
+                const lx = partnerX + 28 * Math.cos(ang);
+                const ly = partnerY + 28 * Math.sin(ang);
                 return (
-                  <text x={lx} y={ly + 4} textAnchor="middle" fontSize="8"
-                    fill="rgba(255,255,255,0.50)" fontFamily="Outfit,sans-serif" letterSpacing="1.4">
+                  <text x={lx} y={ly + 4} textAnchor="middle" fontSize="7.5"
+                    fill="rgba(255,255,255,0.44)" fontFamily="Outfit,sans-serif" letterSpacing="1.5">
                     {partner.name.toUpperCase()}
                   </text>
                 );
@@ -700,29 +686,29 @@ function CompatibilityScreen({ userSign }) {
             </g>
           ) : (
             <g>
-              <circle cx={partnerX} cy={partnerY} r={20}
-                fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.18)" strokeWidth="0.8" strokeDasharray="3 4" />
-              <text x={partnerX} y={partnerY + 5.5} textAnchor="middle" fontSize="13"
-                fill="rgba(255,255,255,0.28)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
+              <circle cx={partnerX} cy={partnerY} r={17}
+                fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6" strokeDasharray="3 3" />
+              <text x={partnerX} y={partnerY + 4.5} textAnchor="middle" fontSize="11"
+                fill="rgba(255,255,255,0.20)" fontFamily="Outfit,sans-serif" fontWeight="300">+</text>
             </g>
           )}
 
-          {/* My sign node — anchored on ellipse 1 */}
+          {/* My sign node — orbiting on outer ring */}
           <g>
-            <circle cx={myX} cy={myY} r={22}
-              fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.44)" strokeWidth="1.4" />
-            <foreignObject x={myX - 13} y={myY - 13} width="26" height="26">
+            <circle cx={myX} cy={myY} r={17}
+              fill="none" stroke="rgba(255,255,255,0.72)" strokeWidth="0.9" />
+            <foreignObject x={myX - 11} y={myY - 11} width="22" height="22">
               <div xmlns="http://www.w3.org/1999/xhtml" style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'rgba(255,255,255,0.95)' }}>
-                <SignGlyph name={mySign.name} size={17} />
+                <SignGlyph name={mySign.name} size={13} />
               </div>
             </foreignObject>
             {(() => {
               const ang = Math.atan2(myY - cy, myX - cx);
-              const lx = myX + 36 * Math.cos(ang);
-              const ly = myY + 36 * Math.sin(ang);
+              const lx = myX + 28 * Math.cos(ang);
+              const ly = myY + 28 * Math.sin(ang);
               return (
-                <text x={lx} y={ly + 4} textAnchor="middle" fontSize="8"
-                  fill="rgba(255,255,255,0.50)" fontFamily="Outfit,sans-serif" letterSpacing="1.4">
+                <text x={lx} y={ly + 4} textAnchor="middle" fontSize="7.5"
+                  fill="rgba(255,255,255,0.50)" fontFamily="Outfit,sans-serif" letterSpacing="1.5">
                   {mySign.name.toUpperCase()}
                 </text>
               );
