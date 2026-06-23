@@ -809,15 +809,15 @@ function CompatibilityScreen({ userSign }) {
         }}>
 
           {/* ── Single mass block — title / description / button at unified width ── */}
-          <div style={{ width: '84%', maxWidth: 272 }}>
+          <div style={{ width: '90%', maxWidth: 310 }}>
 
             <div style={{ fontSize: 19, fontWeight: 700, color: PALETTE.text, marginBottom: 16, letterSpacing: -0.5 }}>
               Discover your cosmic connection
             </div>
 
             <p style={{
-              fontSize: 12, lineHeight: 2.0, color: 'rgba(200,210,240,0.80)',
-              margin: '0 0 32px', fontWeight: 300,
+              fontSize: 12, lineHeight: 1.6, letterSpacing: '0.02em',
+              color: 'rgba(200,210,240,0.80)', margin: '0 0 32px', fontWeight: 300,
             }}>
               Add someone to see how your energies align across love, friendship, work, and attraction — all in one dynamic report.
             </p>
