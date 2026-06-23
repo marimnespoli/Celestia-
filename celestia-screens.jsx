@@ -927,7 +927,7 @@ function CompatibilityScreen({ userSign }) {
           )}
 
           {/* ── Narrative ── */}
-          <div style={{ padding: `0 28px ${SPACING.xxl}px`, flex: 1 }}>
+          <div style={{ padding: `0 28px 96px` }}>
             <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md, letterSpacing: -0.4, lineHeight: 1.3 }}>
               {mySign.name} & {partner.name}
             </div>
