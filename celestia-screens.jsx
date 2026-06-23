@@ -22,6 +22,24 @@ function getRisingSign(birthDateStr, birthTimeStr) {
   return ZODIAC_SIGNS[rising].name;
 }
 
+function getSunSign(birthDateStr) {
+  if (!birthDateStr) return null;
+  const d = new Date(birthDateStr + 'T12:00:00Z');
+  const mo = d.getUTCMonth() + 1, dy = d.getUTCDate();
+  if ((mo===3&&dy>=21)||(mo===4&&dy<=19)) return 'Aries';
+  if ((mo===4&&dy>=20)||(mo===5&&dy<=20)) return 'Taurus';
+  if ((mo===5&&dy>=21)||(mo===6&&dy<=20)) return 'Gemini';
+  if ((mo===6&&dy>=21)||(mo===7&&dy<=22)) return 'Cancer';
+  if ((mo===7&&dy>=23)||(mo===8&&dy<=22)) return 'Leo';
+  if ((mo===8&&dy>=23)||(mo===9&&dy<=22)) return 'Virgo';
+  if ((mo===9&&dy>=23)||(mo===10&&dy<=22)) return 'Libra';
+  if ((mo===10&&dy>=23)||(mo===11&&dy<=21)) return 'Scorpio';
+  if ((mo===11&&dy>=22)||(mo===12&&dy<=21)) return 'Sagittarius';
+  if ((mo===12&&dy>=22)||(mo===1&&dy<=19)) return 'Capricorn';
+  if ((mo===1&&dy>=20)||(mo===2&&dy<=18)) return 'Aquarius';
+  return 'Pisces';
+}
+
 // ── DASHBOARD SCREEN ──────────────────────────────────────────
 function DashboardScreen({ userSign }) {
   const defaultSign = userSign || ZODIAC_SIGNS[0].name;
@@ -830,193 +848,148 @@ function CompatibilityScreen({ userSign }) {
 
 // ── SETTINGS / PROFILE SCREEN ─────────────────────────────────
 function SettingsScreen({ userSign, birthDate, birthTime, onSave }) {
-  const [selSign, setSelSign] = React.useState(userSign || '');
-  const [date, setDate]       = React.useState(birthDate || '');
-  const [time, setTime]       = React.useState(birthTime || '');
-  const [saved, setSaved]     = React.useState(false);
+  const [date, setDate]           = React.useState(birthDate || '');
+  const [time, setTime]           = React.useState(birthTime || '');
+  const [saved, setSaved]         = React.useState(false);
+  const [traitOpen, setTraitOpen] = React.useState(false);
 
-  const handle = () => {
-    if (!selSign) return;
-    onSave(selSign, date, time);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
-  };
-
-  const selectedSign   = ZODIAC_SIGNS.find(z => z.name === selSign);
+  const sunSignName    = date ? getSunSign(date) : (userSign || null);
+  const sunSign        = sunSignName ? ZODIAC_SIGNS.find(z => z.name === sunSignName) : null;
   const moonSignName   = getMoonSign(date);
   const moonSign       = moonSignName ? ZODIAC_SIGNS.find(z => z.name === moonSignName) : null;
   const risingSignName = getRisingSign(date, time);
   const risingSign     = risingSignName ? ZODIAC_SIGNS.find(z => z.name === risingSignName) : null;
 
-  // Shared input style — extracted to reduce duplication (DRY)
+  const hasPending = date !== (birthDate || '') || time !== (birthTime || '');
+
+  const handle = () => {
+    if (!sunSignName) return;
+    onSave(sunSignName, date, time);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 2000);
+  };
+
   const inputStyle = {
-    width: '100%', padding: '14px 16px', borderRadius: 16, boxSizing: 'border-box',
+    width: '100%', padding: '13px 14px', borderRadius: 14, boxSizing: 'border-box',
     background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-    color: PALETTE.text, fontSize: 15, fontFamily: 'Outfit, sans-serif',
+    color: PALETTE.text, fontSize: 14, fontFamily: 'Outfit, sans-serif',
     outline: 'none', cursor: 'pointer', colorScheme: 'dark',
   };
 
   return (
     <div style={{ height: '100%', overflowY: 'auto', paddingBottom: 80 }}>
-      {/* Header — standardised padding matches xl grid (20px sides) */}
+      {/* Header */}
       <div style={{ padding: `18px ${SPACING.xl}px 14px` }}>
-        {/* Breadcrumb label — text-subtle (0.50) = 4.9:1 ✓, upgraded from 0.40 which was 3.5:1 ✗ */}
         <div style={{ ...TYPE.label, color: PALETTE.subtle }}>Your</div>
-        <div style={{ ...TYPE.title, color: PALETTE.text }}>Celestial Profile</div>
+        <div style={{ ...TYPE.title, color: PALETTE.text }}>Birth Chart</div>
       </div>
 
-      {/* All sections use SPACING.xl gap and SPACING.xl horizontal padding for consistent grid */}
       <div style={{ padding: `0 ${SPACING.xl}px`, display: 'flex', flexDirection: 'column', gap: SPACING.xl }}>
 
-        {/* Sign picker — 4-col grid with 8px gap reduces crowding vs original 8px */}
-        <section aria-label="Zodiac sign selection">
-          {/* Section label — text-subtle (0.50) ✓, was 0.50 (borderline), keeping consistent */}
-          <div style={{ ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.sm + 2 }}>Your Zodiac Sign</div>
-          {/* 4-column grid — gap increased to SPACING.sm (8px) for breathing room */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: SPACING.sm }}>
-            {ZODIAC_SIGNS.map(z => (
-              <button
-                key={z.name}
-                onClick={() => setSelSign(z.name)}
-                aria-pressed={selSign === z.name}
-                aria-label={`${z.name}, ${z.dates}`}
-                style={{
-                  background: 'none', border: 'none',
-                  cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center',
-                  gap: SPACING.xs,
-                  transition: 'all 0.2s', fontFamily: 'Outfit, sans-serif',
-                  // Increased padding from 4px to 6px — reduces button crowding (visual breathing room)
-                  padding: `${SPACING.xs + 2}px ${SPACING.xs}px`,
-                  borderRadius: 12,
-                }}
-              >
-                <img
-                  src={`images/icon-${z.name.toLowerCase()}.png`}
-                  alt=""
-                  style={{
-                    width: 52, height: 52, objectFit: 'contain', borderRadius: '50%',
-                    // selection-ring uses lavender (primary-action) with glow
-                    boxShadow: selSign === z.name
-                      ? `0 0 0 3px ${PALETTE.lavender}, 0 4px 16px rgba(155,133,224,0.5)`
-                      : 'none',
-                    transition: 'box-shadow 0.2s',
-                  }}
-                />
-                {/* text-subtle (0.50) for unselected name → 4.9:1 ✓ (was 0.50, keeping) */}
-                <span style={{
-                  fontSize: 9.5,
-                  color: selSign === z.name ? PALETTE.lavender : PALETTE.subtle,
-                  fontWeight: 500,
-                }}>{z.name}</span>
-              </button>
+        {/* ── Inputs — side by side ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: SPACING.sm }}>
+          <section aria-label="Birth date">
+            <label htmlFor="birth-date" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
+              Birth Date
+            </label>
+            <input
+              id="birth-date" type="date" value={date}
+              onChange={e => { setDate(e.target.value); setSaved(false); }}
+              style={inputStyle}
+            />
+          </section>
+          <section aria-label="Birth time">
+            <label htmlFor="birth-time" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
+              Birth Time
+            </label>
+            <input
+              id="birth-time" type="time" value={time}
+              onChange={e => { setTime(e.target.value); setSaved(false); }}
+              style={inputStyle}
+            />
+          </section>
+        </div>
+
+        {/* ── Big Three — hero card ── */}
+        <GlassCard style={{ padding: SPACING.lg }}>
+          <div style={{ ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.md, textAlign: 'center', letterSpacing: 1.6 }}>
+            Big Three
+          </div>
+          <div style={{ display: 'flex', gap: SPACING.sm }}>
+            {[
+              { label: 'Sun',    sign: sunSign,    color: PALETTE.pink,          hint: 'Add date' },
+              { label: 'Moon',   sign: moonSign,   color: PALETTE.lavender,      hint: 'Add date' },
+              { label: 'Rising', sign: risingSign, color: PALETTE.ringMentality, hint: 'Add time' },
+            ].map(({ label, sign, color, hint }) => (
+              <div key={label} style={{
+                flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 14,
+                padding: `${SPACING.md}px ${SPACING.sm}px`,
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: SPACING.xs + 2,
+                opacity: sign ? 1 : 0.38,
+              }}>
+                <div style={{ fontSize: 9, color, textTransform: 'uppercase', letterSpacing: 1.4, fontWeight: 600 }}>{label}</div>
+                {sign
+                  ? <img src={`images/icon-${sign.name.toLowerCase()}.png`} alt={sign.name} style={{ width: 46, height: 46, objectFit: 'contain' }} />
+                  : <div style={{ width: 46, height: 46, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, color: 'rgba(255,255,255,0.18)' }}>?</div>
+                }
+                <div style={{ fontSize: 11, fontWeight: 600, color: PALETTE.text, textAlign: 'center' }}>
+                  {sign ? sign.name : hint}
+                </div>
+              </div>
             ))}
           </div>
-        </section>
 
-        {/* Birth date — label linked via wrapping label element for a11y */}
-        <section aria-label="Birth date input">
-          <label htmlFor="birth-date" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.sm + 2 }}>
-            Birth Date
-          </label>
-          <input
-            id="birth-date"
-            type="date"
-            value={date}
-            onChange={e => setDate(e.target.value)}
-            style={inputStyle}
-          />
-        </section>
-
-        {/* Birth time */}
-        <section aria-label="Birth time input">
-          <label htmlFor="birth-time" style={{ display: 'block', ...TYPE.label, color: PALETTE.subtle, marginBottom: SPACING.xs }}>
-            Birth Time
-          </label>
-          {/* muted (0.65) replaces old 0.30 which was ~2.5:1 — WCAG AA fix */}
-          <div style={{ fontSize: 11, color: PALETTE.muted, marginBottom: SPACING.sm + 2 }}>
-            Used to calculate your Rising sign
-          </div>
-          <input
-            id="birth-time"
-            type="time"
-            value={time}
-            onChange={e => setTime(e.target.value)}
-            style={inputStyle}
-          />
-        </section>
-
-        {/* Profile preview card — increased internal gap from 8px to 12px to reduce crowding */}
-        {selectedSign && (
-          <GlassCard style={{ padding: SPACING.lg }}>
-            <div style={{ display: 'flex', gap: SPACING.md, marginBottom: moonSign || risingSign ? SPACING.md : 0 }}>
-              {[
-                { label: 'Sun',    sign: selectedSign, color: PALETTE.pink },
-                { label: 'Moon',   sign: moonSign,     color: PALETTE.lavender },
-                { label: 'Rising', sign: risingSign,   color: PALETTE.ringMentality },
-              ].map(({ label, sign, color }) => (
-                <div
-                  key={label}
-                  style={{
-                    flex: 1,
-                    background: 'rgba(255,255,255,0.05)',
-                    borderRadius: 12,
-                    // Standardised internal padding using SPACING tokens
-                    padding: `${SPACING.sm + 2}px ${SPACING.sm}px`,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center',
-                    gap: SPACING.sm - 2,
-                    opacity: sign ? 1 : 0.35,
-                  }}
-                >
-                  {/* Category label — uses inline color for semantic distinction */}
-                  <div style={{ fontSize: 9, color, textTransform: 'uppercase', letterSpacing: 1, fontWeight: 600 }}>{label}</div>
-                  {sign
-                    ? <img src={`images/icon-${sign.name.toLowerCase()}.png`} alt={sign.name} style={{ width: 40, height: 40, objectFit: 'contain' }} />
-                    : <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'rgba(255,255,255,0.2)' }}>?</div>
-                  }
-                  {/* text-primary on sign name — highest priority in this card */}
-                  <div style={{ fontSize: 12, fontWeight: 600, color: PALETTE.text }}>
-                    {sign ? sign.name : label === 'Moon' ? 'Add date' : 'Add time'}
-                  </div>
+          {/* ── Traits accordion ── */}
+          {sunSign && (
+            <div style={{ marginTop: SPACING.md }}>
+              <button
+                onClick={() => setTraitOpen(o => !o)}
+                style={{
+                  display: 'flex', width: '100%', alignItems: 'center', justifyContent: 'space-between',
+                  background: 'none', border: 'none', cursor: 'pointer', padding: `${SPACING.xs}px 0`,
+                  color: PALETTE.muted, fontSize: 11, fontFamily: 'Outfit, sans-serif',
+                }}
+              >
+                <span style={{ textTransform: 'uppercase', letterSpacing: 1.2 }}>Explore your traits</span>
+                <span style={{ fontSize: 12, display: 'inline-block', transition: 'transform 0.25s', transform: traitOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+              </button>
+              {traitOpen && (
+                <div style={{ display: 'flex', gap: SPACING.xs + 2, flexWrap: 'wrap', marginTop: SPACING.sm }}>
+                  {(sunSign.traits || []).map(t => (
+                    <span key={'s-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(240,168,196,0.15)', color: PALETTE.pink, border: '1px solid rgba(240,168,196,0.25)' }}>{t}</span>
+                  ))}
+                  {(moonSign?.traits || []).slice(0,2).map(t => (
+                    <span key={'m-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(155,133,224,0.15)', color: '#B8A4E8', border: '1px solid rgba(155,133,224,0.25)' }}>{t}</span>
+                  ))}
+                  {(risingSign?.traits || []).slice(0,1).map(t => (
+                    <span key={'r-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm+2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(126,200,227,0.15)', color: PALETTE.ringMentality, border: '1px solid rgba(126,200,227,0.25)' }}>{t}</span>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
+          )}
+        </GlassCard>
 
-            {/* Trait tags — wrapped pills with consistent inner padding */}
-            <div style={{ display: 'flex', gap: SPACING.sm - 2, flexWrap: 'wrap' }}>
-              {(selectedSign.traits || []).map(t => (
-                // primary-trait: pink for Sun sign
-                <span key={'sun-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm + 2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(240,168,196,0.15)', color: PALETTE.pink, border: '1px solid rgba(240,168,196,0.25)' }}>{t}</span>
-              ))}
-              {(moonSign?.traits || []).slice(0,2).map(t => (
-                // secondary-trait: lavender for Moon sign
-                <span key={'moon-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm + 2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(155,133,224,0.15)', color: '#B8A4E8', border: '1px solid rgba(155,133,224,0.25)' }}>{t}</span>
-              ))}
-              {(risingSign?.traits || []).slice(0,1).map(t => (
-                // tertiary-trait: cyan for Rising sign
-                <span key={'ris-'+t} style={{ padding: `${SPACING.xs}px ${SPACING.sm + 2}px`, borderRadius: 20, fontSize: 11, background: 'rgba(126,200,227,0.15)', color: PALETTE.ringMentality, border: '1px solid rgba(126,200,227,0.25)' }}>{t}</span>
-              ))}
-            </div>
-          </GlassCard>
+        {/* ── Save — only when there are pending changes ── */}
+        {(hasPending || saved) && (
+          <button
+            onClick={handle}
+            aria-label={saved ? 'Profile saved' : 'Save profile'}
+            style={{
+              padding: '15px', borderRadius: 20,
+              background: saved
+                ? 'linear-gradient(135deg,#4CAF8A,#2E8B6A)'
+                : 'linear-gradient(135deg,#9B85E0,#F0A8C4)',
+              border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
+              cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
+              boxShadow: '0 8px 32px rgba(155,133,224,0.4)', transition: 'all 0.3s',
+            }}
+            onMouseEnter={e => { if (!saved) e.currentTarget.style.boxShadow = '0 12px 40px rgba(155,133,224,0.6)'; }}
+            onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(155,133,224,0.4)'; }}
+          >
+            {saved ? '✓ Saved!' : 'Save Changes'}
+          </button>
         )}
-
-        {/* Save — primary-action button with success state transition */}
-        <button
-          onClick={handle}
-          aria-label={saved ? 'Profile saved' : 'Save profile'}
-          style={{
-            padding: '15px', borderRadius: 20,
-            background: saved
-              ? 'linear-gradient(135deg,#4CAF8A,#2E8B6A)'
-              : 'linear-gradient(135deg,#9B85E0,#F0A8C4)',
-            border: 'none', color: '#fff', fontSize: 15, fontWeight: 600,
-            cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
-            boxShadow: '0 8px 32px rgba(155,133,224,0.4)', transition: 'all 0.3s',
-          }}
-          onMouseEnter={e => { if (!saved) e.currentTarget.style.boxShadow = '0 12px 40px rgba(155,133,224,0.6)'; }}
-          onMouseLeave={e => { e.currentTarget.style.boxShadow = '0 8px 32px rgba(155,133,224,0.4)'; }}
-        >
-          {saved ? '✓ Saved!' : 'Save Profile'}
-        </button>
       </div>
     </div>
   );
