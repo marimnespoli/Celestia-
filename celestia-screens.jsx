@@ -652,7 +652,7 @@ function CompatibilityScreen({ userSign }) {
               {userSign}
             </div>
           )}
-          <span style={{ fontSize: 20, fontWeight: 700, color: PALETTE.text, letterSpacing: -0.4 }}>Sintonia Cósmica</span>
+          <span style={{ fontSize: 20, fontWeight: 700, color: PALETTE.text, letterSpacing: -0.4 }}>Cosmic Synergy</span>
         </div>
         <div style={{ display: 'flex', gap: SPACING.xs }} aria-hidden="true">
           {[0,1,2].map(i => <div key={i} style={{ width: 20, height: 2.5, borderRadius: 2, background: 'rgba(240,238,248,0.3)' }} />)}
@@ -732,17 +732,17 @@ function CompatibilityScreen({ userSign }) {
 
           <div>
             <div style={{ fontSize: 17, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.xs, letterSpacing: -0.3 }}>
-              Descubra a sintonia entre vocês
+              Discover your cosmic connection
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.75, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
-              Adicione alguém para ver como seus mapas astrais se alinham e explorar a conexão cósmica entre os dois.
+              Add someone to see how your birth charts align and explore the cosmic bond between you.
             </p>
           </div>
 
           {/* Primary CTA */}
           <button
             onClick={() => setShowPicker(true)}
-            aria-label="Conectar com alguém"
+            aria-label="Connect with someone"
             style={{
               padding: '14px', borderRadius: 20,
               background: 'linear-gradient(135deg,#9B85E0,#F0A8C4)',
@@ -758,16 +758,16 @@ function CompatibilityScreen({ userSign }) {
             <svg width="15" height="15" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
               <path d="M7 2v10M2 7h10" />
             </svg>
-            Conectar com alguém
+            Connect with someone
           </button>
 
           {/* Category chips */}
           <div>
             <div style={{ fontSize: 10, color: PALETTE.muted, letterSpacing: 1.4, textTransform: 'uppercase', marginBottom: SPACING.sm }}>
-              Explorar compatibilidade em
+              Explore compatibility in
             </div>
             <div style={{ display: 'flex', gap: SPACING.sm - 2, flexWrap: 'wrap' }}>
-              {['Amor', 'Amizade', 'Trabalho', 'Crush'].map(cat => (
+              {['Love', 'Friendship', 'Work', 'Crush'].map(cat => (
                 <button
                   key={cat}
                   onClick={() => setShowPicker(true)}
@@ -808,7 +808,7 @@ function CompatibilityScreen({ userSign }) {
               onMouseEnter={e => { e.currentTarget.style.borderColor='rgba(255,255,255,0.38)'; e.currentTarget.style.color='#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.borderColor='rgba(255,255,255,0.20)'; e.currentTarget.style.color='rgba(255,255,255,0.65)'; }}
             >
-              Mudar · {partner.name}
+              Change · {partner.name}
             </button>
           </div>
 
@@ -817,11 +817,11 @@ function CompatibilityScreen({ userSign }) {
             <div style={{ padding: `${SPACING.sm}px ${SPACING.xxl}px` }}>
               <div style={{ textAlign: 'center', fontSize: 21, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.md }}>
                 {compat}%{' '}
-                <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>sintonia geral</span>
+                <span style={{ fontSize: 13, fontWeight: 400, color: PALETTE.muted }}>overall match</span>
               </div>
               <div style={{ display: 'flex', justifyContent: 'center', gap: 40 }}>
-                <CircularProgress key="compat-love"   value={loveScore}   label="Amor"     color={PALETTE.ringLove} size={80} />
-                <CircularProgress key="compat-friend" value={friendScore} label="Amizade"  color={PALETTE.lavender} size={80} />
+                <CircularProgress key="compat-love"   value={loveScore}   label="Love"       color={PALETTE.ringLove} size={80} />
+                <CircularProgress key="compat-friend" value={friendScore} label="Friendship" color={PALETTE.lavender} size={80} />
               </div>
             </div>
           )}
@@ -832,7 +832,7 @@ function CompatibilityScreen({ userSign }) {
               {mySign.name} & {partner.name}
             </div>
             <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.48)', margin: 0 }}>
-              {`${mySign.name} e ${partner.name} compartilham uma conexão ${compat >= 80 ? 'profundamente harmoniosa' : compat >= 65 ? 'complementar e rica' : 'desafiadora e transformadora'}. A dança celeste entre ${mySign.planet} e ${partner.planet} cria ${compat >= 75 ? 'uma sinergia poderosa' : 'uma tensão que impulsiona o crescimento'}.`}
+              {`${mySign.name} and ${partner.name} share a ${compat >= 80 ? 'deeply harmonious' : compat >= 65 ? 'complementary and rich' : 'challenging yet transformative'} connection. The celestial dance between ${mySign.planet} and ${partner.planet} creates ${compat >= 75 ? 'powerful synergy' : 'meaningful tension that drives growth'}.`}
             </p>
           </div>
         </>
@@ -843,7 +843,7 @@ function CompatibilityScreen({ userSign }) {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Escolha o signo do parceiro"
+          aria-label="Choose your partner's zodiac sign"
           style={{
             position: 'absolute', inset: 0,
             background: 'rgba(10,10,34,0.97)',
@@ -853,7 +853,7 @@ function CompatibilityScreen({ userSign }) {
           }}
         >
           <div style={{ padding: `${SPACING.xl}px ${SPACING.xxl}px ${SPACING.md}px`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span style={{ fontSize: 18, fontWeight: 600, color: PALETTE.text }}>Escolha o signo</span>
+            <span style={{ fontSize: 18, fontWeight: 600, color: PALETTE.text }}>Choose a sign</span>
             <button
               onClick={() => setShowPicker(false)}
               aria-label="Fechar"
@@ -889,7 +889,7 @@ function CompatibilityScreen({ userSign }) {
                   }}
                 >
                   {isSelecting ? (
-                    <div aria-label="Carregando..." style={{
+                    <div aria-label="Loading..." style={{
                       width: 44, height: 44, borderRadius: '50%',
                       border: `3px solid ${PALETTE.lavender}`, borderTopColor: 'transparent',
                       animation: 'spin 0.7s linear infinite',
@@ -933,12 +933,12 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
 
   const handleShare = () => {
     const parts = [
-      sunSignName   ? `Sol em ${sunSignName}` : null,
-      moonSignName  ? `Lua em ${moonSignName}` : null,
-      risingSignName? `Asc em ${risingSignName}` : null,
+      sunSignName    ? `Sun: ${sunSignName}` : null,
+      moonSignName   ? `Moon: ${moonSignName}` : null,
+      risingSignName ? `Rising: ${risingSignName}` : null,
     ].filter(Boolean).join(' · ');
-    const text = `Meu Big Three: ${parts} — Celestia`;
-    if (navigator.share) navigator.share({ title: 'Meu Mapa Astral', text });
+    const text = `My Big Three: ${parts} — Celestia`;
+    if (navigator.share) navigator.share({ title: 'My Birth Chart', text });
     else navigator.clipboard?.writeText(text);
   };
 
@@ -967,7 +967,7 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
         {sunSign && (
           <button
             onClick={handleShare}
-            aria-label="Compartilhar mapa astral"
+            aria-label="Share birth chart"
             style={{
               background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.14)',
               borderRadius: 12, padding: '8px 10px', cursor: 'pointer',
@@ -982,7 +982,7 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
               <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
               <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
             </svg>
-            Compartilhar
+            Share
           </button>
         )}
       </div>
@@ -1034,9 +1034,9 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
           </div>
           <div style={{ display: 'flex', gap: SPACING.sm }}>
             {[
-              { label: 'Sun',    sub: 'Essência',           sign: sunSign,    color: PALETTE.pink,          hint: 'Add date' },
-              { label: 'Moon',   sub: 'Emoções',            sign: moonSign,   color: PALETTE.lavender,      hint: 'Add date' },
-              { label: 'Rising', sub: 'Primeira impressão', sign: risingSign, color: PALETTE.ringMentality, hint: 'Add time' },
+              { label: 'Sun',    sub: 'Essence',            sign: sunSign,    color: PALETTE.pink,          hint: 'Add date' },
+              { label: 'Moon',   sub: 'Emotions',           sign: moonSign,   color: PALETTE.lavender,      hint: 'Add date' },
+              { label: 'Rising', sub: 'First impression',   sign: risingSign, color: PALETTE.ringMentality, hint: 'Add time' },
             ].map(({ label, sub, sign, color, hint }) => (
               <div key={label} style={{
                 flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: 14,
@@ -1063,7 +1063,7 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
           {sunSign && (
             <div style={{ marginTop: SPACING.md }}>
               <div style={{ fontSize: 9, color: PALETTE.muted, textTransform: 'uppercase', letterSpacing: 1.4, marginBottom: SPACING.sm }}>
-                Seus traços
+                Your traits
               </div>
               <div style={{ display: 'flex', gap: SPACING.xs + 2, flexWrap: 'wrap' }}>
                 {(sunSign.traits || []).map(t => (
@@ -1094,8 +1094,8 @@ function SettingsScreen({ userSign, birthDate, birthTime, onSave, onNavigate }) 
                   onMouseLeave={e => { e.currentTarget.style.background='rgba(255,255,255,0.05)'; e.currentTarget.style.borderColor='rgba(255,255,255,0.10)'; }}
                 >
                   <div style={{ textAlign: 'left' }}>
-                    <div style={{ fontSize: 11, color: PALETTE.muted, marginBottom: 2 }}>Como isso afeta seu dia?</div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: PALETTE.text }}>Ver meu horóscopo</div>
+                    <div style={{ fontSize: 11, color: PALETTE.muted, marginBottom: 2 }}>How does this affect your day?</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: PALETTE.text }}>See my horoscope</div>
                   </div>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(155,133,224,0.70)" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
                     <path d="M9 18l6-6-6-6"/>
