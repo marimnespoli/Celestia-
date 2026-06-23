@@ -847,7 +847,7 @@ function CompatibilityScreen({ userSign }) {
 
             <p style={{
               margin: `${SPACING['3xl']}px 0 0`,
-              fontSize: 11, letterSpacing: 0.5, fontStyle: 'italic', fontWeight: 400,
+              fontSize: 11, letterSpacing: 1.2, fontStyle: 'italic', fontWeight: 400,
               color: 'rgba(200,210,240,0.85)',
             }}>
               Your cosmic connection is one click away.
