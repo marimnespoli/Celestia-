@@ -648,50 +648,22 @@ function CompatibilityScreen({ userSign }) {
   };
 
 
-  const harmonyText = {
+  const narrativeText = {
     Love: compat >= 80
-      ? `${mySign.name} and ${partner?.name} radiate a natural, uplifting bond. Your energies align to amplify each other's strengths and create a rare sense of ease.`
+      ? `A natural, uplifting bond — your energies align to amplify each other's strengths, creating a rare and effortless ease. Even so, watch for moments when shared intensity becomes pressure; honouring individual space is what keeps this connection alive and vibrant.`
       : compat >= 65
-      ? `${mySign.name} and ${partner?.name} find beauty in contrast — your different energies complement each other in ways that deepen with time.`
-      : `${mySign.name} and ${partner?.name} discover meaning through difference. The tension between you can spark genuine transformation when channelled with care.`,
+      ? `Beauty lives in your contrast — different energies that complement each other in ways that deepen with time. Differing rhythms can create friction, but patience and honest expression are your greatest tools when navigating that tension.`
+      : `Meaning emerges through difference — the pull between you can spark genuine transformation when channelled with care. This dynamic asks for deliberate effort; power imbalances need mutual respect and a real willingness to evolve together.`,
     Friendship: compat >= 80
-      ? `${mySign.name} and ${partner?.name} are natural allies. Your connection feels effortless and mutually supportive — a friendship built to last.`
+      ? `You are natural allies — your connection feels effortless and mutually supportive, a friendship built to endure. Strong bonds like this can quietly slip toward codependency, though; making space for individual growth keeps the dynamic healthy and fresh.`
       : compat >= 65
-      ? `${mySign.name} and ${partner?.name} bring out unique qualities in each other. Your bond rewards you both with genuine understanding over time.`
-      : `${mySign.name} and ${partner?.name} may clash at first, but shared experiences reveal unexpected common ground.`,
+      ? `Unique qualities emerge when you're together — your bond rewards both of you with genuine understanding over time. Mismatched energy levels can lead to one-sided effort, so regular and honest check-ins are what keep things balanced.`
+      : `Unexpected common ground surfaces through shared experience, even if first impressions are marked by friction. Different communication styles can cause misunderstandings — lead with curiosity rather than assumptions to bridge the gap.`,
     Work: compat >= 80
-      ? `${mySign.name} and ${partner?.name} are a powerhouse team. Complementary skills and shared drive create remarkable results when focused on a common goal.`
+      ? `A powerhouse pairing — complementary skills and shared drive create remarkable results when focused on a common goal. High-performing partnerships can breed tension over recognition, though; defining clear lanes of ownership early prevents conflict from building.`
       : compat >= 65
-      ? `${mySign.name} and ${partner?.name} bring different strengths to the table. The contrast in your styles fuels creative and well-rounded outcomes.`
-      : `${mySign.name} and ${partner?.name} have starkly different working rhythms. With clear roles and boundaries, these differences become your greatest asset.`,
-    Crush: compat >= 80
-      ? `The pull between ${mySign.name} and ${partner?.name} is magnetic and undeniable. Your chemistry is electric — a connection written in the stars.`
-      : compat >= 65
-      ? `${mySign.name} and ${partner?.name} share a smouldering tension. The attraction is real and the intrigue runs deep.`
-      : `${mySign.name} and ${partner?.name} orbit each other with restless energy. The contrast between you creates a fascination that's hard to ignore.`,
-  };
-
-  const attentionText = {
-    Love: compat >= 80
-      ? `Even the deepest bonds need nurturing. Watch for moments when shared intensity becomes pressure — honouring individual space keeps the connection vibrant.`
-      : compat >= 65
-      ? `Differing rhythms between ${mySign.planet} and ${partner?.planet} can create friction. Patience and clear expression are your most powerful tools.`
-      : `The push-pull between your signs demands deliberate effort. Power dynamics require mutual respect and a willingness to adapt.`,
-    Friendship: compat >= 80
-      ? `Strong friendships can slip into codependency. Make space for individual growth to keep the dynamic healthy and fresh.`
-      : compat >= 65
-      ? `Mismatched energy levels can lead to one-sided effort. Regular honest check-ins ensure the friendship feels balanced for both of you.`
-      : `Different communication styles may cause misunderstandings. Lead with curiosity, not assumptions, to bridge the gap.`,
-    Work: compat >= 80
-      ? `High-performing partnerships can breed friction over recognition. Defining clear lanes of ownership early prevents tension from building.`
-      : compat >= 65
-      ? `Contrasting approaches may cause decision-making friction. Agree on a shared process before diving into tasks to maintain momentum.`
-      : `Clashing work styles require explicit agreements. Set shared expectations around communication and deadlines to avoid frustration.`,
-    Crush: compat >= 80
-      ? `Intense chemistry can move fast. Let things unfold naturally rather than rushing — the real depth of this connection reveals itself with time.`
-      : compat >= 65
-      ? `The attraction is real, but don't mistake excitement for compatibility. Take time to understand each other's deeper values before diving in.`
-      : `The pull you feel may be more about contrast than lasting harmony. Stay grounded in what you truly need as you explore this connection.`,
+      ? `Different strengths brought together fuel creative, well-rounded outcomes — your contrast is your professional asset. Opposing approaches can slow decisions, so agreeing on a shared process before diving in keeps real momentum alive.`
+      : `Starkly different rhythms mean that with clear roles and firm boundaries, your differences can become your greatest professional asset. It takes explicit agreements — shared expectations around communication and deadlines — to avoid frustration.`,
   };
 
   return (
@@ -716,26 +688,30 @@ function CompatibilityScreen({ userSign }) {
       <div style={{ position: 'relative', height: 248, flexShrink: 0, overflow: 'hidden', marginTop: 20 }}>
         <svg viewBox="0 0 320 248" width="100%" height="248" style={{ position: 'absolute', inset: 0 }} aria-hidden="true">
           <defs>
-            <filter id="intersection-glow-blur">
-              <feGaussianBlur stdDeviation="16" />
-            </filter>
+            <radialGradient id="nebula-core" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor={compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080'} stopOpacity={compat ? compat / 100 * 0.55 : 0} />
+              <stop offset="50%"  stopColor={compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080'} stopOpacity={compat ? compat / 100 * 0.20 : 0} />
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="nebula-outer" cx="50%" cy="50%" r="50%">
+              <stop offset="0%"   stopColor={compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080'} stopOpacity={compat ? compat / 100 * 0.12 : 0} />
+              <stop offset="100%" stopColor="transparent" stopOpacity="0" />
+            </radialGradient>
           </defs>
 
-          {/* Intersection glow — opacity and color scale with compatibility % */}
+          {/* Soft nebula glow — diffuse radial gradient, no hard edges */}
           {partner && compat && (
-            <circle
-              cx={(c1x + c2x) / 2} cy={(c1y + c2y) / 2} r={50}
-              fill={compat >= 75 ? '#D4AF37' : compat >= 55 ? '#9B85E0' : '#C06080'}
-              filter="url(#intersection-glow-blur)"
-              opacity={compat / 100 * 0.68}
-            />
+            <g>
+              <ellipse cx={(c1x + c2x) / 2} cy={(c1y + c2y) / 2} rx={88} ry={72} fill="url(#nebula-outer)" />
+              <ellipse cx={(c1x + c2x) / 2} cy={(c1y + c2y) / 2} rx={52} ry={42} fill="url(#nebula-core)" />
+            </g>
           )}
 
-          {/* Two crossing orbits */}
+          {/* Two crossing orbits — delicate, integrated with background */}
           <circle cx={c1x} cy={c1y} r={ORB_R} fill="none"
-            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" />
+            stroke="rgba(200,180,240,0.28)" strokeWidth="0.9" />
           <circle cx={c2x} cy={c2y} r={ORB_R} fill="none"
-            stroke="rgba(200,158,148,0.42)" strokeWidth="1.2" />
+            stroke="rgba(200,180,240,0.28)" strokeWidth="0.9" />
 
           {/* Partner node — pulses when empty */}
           {partner ? (
@@ -893,6 +869,11 @@ function CompatibilityScreen({ userSign }) {
             </div>
           )}
 
+          {/* Subtle divider anchoring the hero number */}
+          {compat && (
+            <div style={{ height: 1, background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.09) 25%, rgba(255,255,255,0.09) 75%, transparent)', margin: `0 ${SPACING['3xl']}px ${SPACING.lg}px` }} />
+          )}
+
           {/* ── 3 category chips with inline score ── */}
           {compat && catScores && (
             <div style={{ display: 'flex', gap: SPACING.sm, padding: `0 ${SPACING.xl}px`, marginBottom: SPACING.xl }}>
@@ -929,52 +910,29 @@ function CompatibilityScreen({ userSign }) {
           {/* ── Narrative inside glass card ── */}
           <div style={{ padding: `0 ${SPACING.xl}px 96px` }}>
             <GlassCard style={{ padding: SPACING.xl }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: PALETTE.text, marginBottom: SPACING.lg, letterSpacing: -0.4, lineHeight: 1.3 }}>
-                {mySign.name} & {partner.name}
-              </div>
-
-              {/* Harmony */}
-              <div style={{ marginBottom: SPACING.lg }}>
-                <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.ringLove, fontWeight: 700, marginBottom: SPACING.sm }}>
-                  Harmony
+              {/* Header row: sign names + discreet share icon */}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: SPACING.lg }}>
+                <div style={{ fontSize: 16, fontWeight: 700, color: PALETTE.text, letterSpacing: -0.4, lineHeight: 1.3 }}>
+                  {mySign.name} & {partner.name}
                 </div>
-                <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.88)', margin: 0 }}>
-                  {harmonyText[category]}
-                </p>
-              </div>
-
-              {/* Point of Attention */}
-              <div style={{ marginBottom: SPACING.xl }}>
-                <div style={{ fontSize: 9, letterSpacing: 2.2, textTransform: 'uppercase', color: PALETTE.lavender, fontWeight: 700, marginBottom: SPACING.sm }}>
-                  Point of Attention
-                </div>
-                <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.78)', margin: 0 }}>
-                  {attentionText[category]}
-                </p>
-              </div>
-
-              {/* Share Result */}
-              <div style={{ background: 'linear-gradient(135deg,rgba(212,175,55,0.50),rgba(155,133,224,0.50))', padding: '1px', borderRadius: 14 }}>
                 <button
                   onClick={() => setShowShare(true)}
-                  style={{
-                    width: '100%', padding: '12px', borderRadius: 13,
-                    background: 'rgba(10,8,38,0.85)', border: 'none',
-                    color: '#fff', fontSize: 13, fontWeight: 600,
-                    cursor: 'pointer', fontFamily: 'Outfit, sans-serif', letterSpacing: 0.3,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 7,
-                    transition: 'background 0.20s',
-                  }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(155,133,224,0.18)'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(10,8,38,0.85)'; }}
+                  aria-label="Share result"
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'rgba(200,190,240,0.50)', transition: 'color 0.2s', display: 'flex', alignItems: 'center', flexShrink: 0 }}
+                  onMouseEnter={e => { e.currentTarget.style.color = 'rgba(200,190,240,0.90)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.color = 'rgba(200,190,240,0.50)'; }}
                 >
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
                   </svg>
-                  Share Result
                 </button>
               </div>
+
+              {/* Single continuous narrative paragraph */}
+              <p style={{ fontSize: 13, lineHeight: 1.85, color: 'rgba(240,238,248,0.88)', margin: 0 }}>
+                {narrativeText[category]}
+              </p>
             </GlassCard>
           </div>
         </>
